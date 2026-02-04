@@ -1,0 +1,131 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-10-01 10:26:01.416061",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "request_details_section",
+  "requested_by",
+  "purchase_order",
+  "item",
+  "estimated_price",
+  "amount",
+  "section_break_hmlv",
+  "suppliers",
+  "section_break_ozhc",
+  "total",
+  "the_discount_percentage_if_any",
+  "the_discount_value_if_any",
+  "the_general_total_after_discount",
+  "based_on_the_above_analysis_the_supplier_is_selected",
+  "reasons_to_choose_a_supplier"
+ ],
+ "fields": [
+  {
+   "fieldname": "request_details_section",
+   "fieldtype": "Section Break",
+   "label": "Request Details"
+  },
+  {
+   "fieldname": "requested_by",
+   "fieldtype": "Link",
+   "label": "Requested By",
+   "options": "Employee"
+  },
+  {
+   "fetch_from": "purchase_order_copy.details",
+   "fieldname": "purchase_order",
+   "fieldtype": "Link",
+   "label": "Purchase order",
+   "options": "Purchases Order"
+  },
+  {
+   "fetch_from": "purchase_order_copy.details",
+   "fieldname": "item",
+   "fieldtype": "Data",
+   "ignore_user_permissions": 1,
+   "label": "Item"
+  },
+  {
+   "fieldname": "estimated_price",
+   "fieldtype": "Currency",
+   "label": "Estimated Price",
+   "precision": "2"
+  },
+  {
+   "fieldname": "section_break_hmlv",
+   "fieldtype": "Section Break",
+   "label": "Suppliers Details"
+  },
+  {
+   "fieldname": "suppliers",
+   "fieldtype": "Table",
+   "label": "Suppliers",
+   "options": "Suppliers Table"
+  },
+  {
+   "fieldname": "amount",
+   "fieldtype": "Data",
+   "label": "Amount"
+  },
+  {
+   "fieldname": "section_break_ozhc",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "total",
+   "fieldtype": "Currency",
+   "label": "Total"
+  },
+  {
+   "fieldname": "the_discount_percentage_if_any",
+   "fieldtype": "Currency",
+   "label": "The discount percentage, if any"
+  },
+  {
+   "fieldname": "the_discount_value_if_any",
+   "fieldtype": "Currency",
+   "label": "The discount value, if any"
+  },
+  {
+   "fieldname": "the_general_total_after_discount",
+   "fieldtype": "Currency",
+   "label": "The general total after discount"
+  },
+  {
+   "fieldname": "based_on_the_above_analysis_the_supplier_is_selected",
+   "fieldtype": "Data",
+   "label": "Based on the above analysis, the supplier is selected"
+  },
+  {
+   "fieldname": "reasons_to_choose_a_supplier",
+   "fieldtype": "Data",
+   "label": "Reasons to choose a supplier"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-10-08 09:58:03.782517",
+ "modified_by": "Administrator",
+ "module": "operation",
+ "name": "Quotation Analysis",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

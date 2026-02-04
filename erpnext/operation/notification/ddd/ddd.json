@@ -1,0 +1,32 @@
+{
+ "attach_print": 0,
+ "channel": "Email",
+ "condition": "doc.workflow_state == \"Approved By IT Team\"",
+ "creation": "2024-09-18 14:07:06.622453",
+ "days_in_advance": 0,
+ "docstatus": 0,
+ "doctype": "Notification",
+ "document_type": "Internet and Phone Payment",
+ "enabled": 0,
+ "event": "Value Change",
+ "idx": 0,
+ "is_standard": 1,
+ "message": "You have a new Internet or Phone Payment Request for:\n{{doc.details}}",
+ "modified": "2024-09-18 14:50:16.439612",
+ "modified_by": "adahan@i-aps.com",
+ "module": "operation",
+ "name": "ddd",
+ "owner": "adahan@i-aps.com",
+ "print_format": "Internet and Phone Payment",
+ "recipients": [
+  {
+   "receiver_by_role": "Academics User"
+  }
+ ],
+ "send_system_notification": 1,
+ "send_to_all_assignees": 0,
+ "sender": "Admin",
+ "sender_email": "erpsystem129@gmail.com",
+ "subject": "You have a new Internet or Phone Payment Request",
+ "value_changed": "workflow_state"
+}

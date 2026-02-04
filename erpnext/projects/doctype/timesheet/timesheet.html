@@ -1,0 +1,3991 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ERPNext Timesheet</title>
+<style>
+  :root{
+    /* Formal Modern Light Theme */
+    --bg: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #cbd5e1 100%);
+    --card: rgba(255, 255, 255, 0.95);
+    --text: #1e293b;
+    --muted: #64748b;
+    --primary: linear-gradient(135deg, #810032 0%, #da0078 100%);
+    --primary-hover: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+    --border: rgba(203, 213, 225, 0.8);
+    --danger: #ff0000;
+    --success: #059669;
+    --warning: #d97706;
+    --ring: rgba(59, 130, 246, 0.25);
+    --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    --glass: rgba(255, 255, 255, 0.1);
+    --glass-border: rgba(203, 213, 225, 0.3);
+    --glow: 0 0 15px rgba(59, 130, 246, 0.2);
+    --glow-strong: 0 0 25px rgba(59, 130, 246, 0.3);
+    
+    /* Dark mode variables */
+    --dark-bg: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+    --dark-card: rgba(30, 41, 59, 0.95);
+    --dark-text: #f1f5f9;
+    --dark-muted: #94a3b8;
+    --dark-primary: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    --dark-primary-hover: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+    --dark-border: rgba(51, 65, 85, 0.8);
+    --dark-ring: rgba(59, 130, 246, 0.25);
+    --dark-glass: rgba(30, 41, 59, 0.1);
+    --dark-glass-border: rgba(51, 65, 85, 0.3);
+    --dark-input-bg: rgba(15, 23, 42, 0.8);
+    --dark-table-header: rgba(51, 65, 85, 0.9);
+    --dark-table-odd: rgba(30, 41, 59, 0.5);
+    --dark-table-even: rgba(51, 65, 85, 0.5);
+    --dark-table-hover: rgba(71, 85, 105, 0.6);
+    --dark-glow: 0 0 15px rgba(59, 130, 246, 0.2);
+    --dark-glow-strong: 0 0 25px rgba(59, 130, 246, 0.3);
+  }
+  
+  /* Dark mode styles */
+  body.dark-mode {
+    background: var(--dark-bg);
+    color: var(--dark-text);
+  }
+  
+  body.dark-mode .card {
+    background: var(--dark-card);
+    border-color: var(--dark-glass-border);
+  }
+  
+  body.dark-mode .header {
+    background: linear-gradient(135deg, rgba(30,41,59,0.9) 0%, rgba(30,41,59,0.7) 100%);
+    border-bottom-color: var(--dark-glass-border);
+  }
+  
+  body.dark-mode .header h1 {
+    background: var(--dark-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  body.dark-mode .section {
+    background: rgba(30, 41, 59, 0.5);
+    border-color: var(--dark-glass-border);
+  }
+  
+  body.dark-mode .section-title {
+    background: var(--dark-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  /* Dark mode section title styling */
+  body.dark-mode #timesheet-form .section-title {
+    background: var(--dark-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  body.dark-mode #timesheet-form-2 .section-title {
+    color: var(--dark-muted);
+  }
+  
+  body.dark-mode input,
+  body.dark-mode select {
+    background: var(--dark-input-bg);
+    border-color: var(--dark-glass-border);
+    color: var(--dark-text);
+  }
+  
+  body.dark-mode input:focus,
+  body.dark-mode select:focus {
+    border-color: var(--dark-primary);
+    box-shadow: 0 0 0 4px var(--dark-ring);
+    background: rgba(15, 23, 42, 1);
+  }
+  
+  body.dark-mode .link-dropdown {
+    background: rgba(30, 41, 59, 0.95);
+    border-color: var(--dark-glass-border);
+  }
+  
+  body.dark-mode .link-item:hover,
+  body.dark-mode .link-item.active {
+    background: rgba(139, 92, 246, 0.1);
+  }
+  
+  body.dark-mode .link-item .value {
+    color: var(--dark-text);
+  }
+  
+  body.dark-mode .link-item .desc {
+    color: var(--dark-muted);
+  }
+  
+  body.dark-mode .table-card {
+    background: var(--dark-card);
+    border-color: var(--dark-glass-border);
+  }
+  
+  body.dark-mode .table-toolbar {
+    background: var(--dark-table-header);
+    border-color: var(--dark-glass-border);
+  }
+  
+  body.dark-mode thead th {
+    background: var(--dark-table-header);
+    border-bottom-color: var(--dark-glass-border);
+  }
+  
+  body.dark-mode tbody td {
+    color: var(--dark-text);
+    border-bottom-color: var(--dark-glass-border);
+  }
+  
+  body.dark-mode tbody tr:nth-child(odd) td {
+    background: var(--dark-table-odd);
+  }
+  
+  body.dark-mode tbody tr:nth-child(even) td {
+    background: var(--dark-table-even);
+  }
+  
+  body.dark-mode tbody tr:hover td {
+    background: var(--dark-table-hover);
+  }
+  
+  body.dark-mode tbody td input {
+    background: var(--dark-input-bg);
+    border-color: var(--dark-glass-border);
+    color: var(--dark-text);
+  }
+  
+  body.dark-mode tbody td input:focus {
+    border-color: var(--dark-primary);
+    box-shadow: 0 0 0 3px var(--dark-ring);
+  }
+  
+  body.dark-mode tbody td select {
+    background: var(--dark-input-bg);
+    border-color: var(--dark-glass-border);
+    color: var(--dark-text);
+  }
+  
+  body.dark-mode tbody td select:focus {
+    border-color: var(--dark-primary);
+    box-shadow: 0 0 0 3px var(--dark-ring);
+  }
+  
+  body.dark-mode .footer {
+    background: linear-gradient(135deg, rgba(30,41,59,0.8) 0%, rgba(30,41,59,0.6) 100%);
+    border-top-color: var(--dark-glass-border);
+  }
+  
+  body.dark-mode #status {
+    background: rgba(30, 41, 59, 0.8);
+  }
+  
+  /* Dark mode frozen column styles */
+  body.dark-mode thead th:nth-child(4) {
+    background: var(--dark-table-header);
+    border-right-color: var(--dark-glass-border);
+  }
+  
+  body.dark-mode tbody tr:nth-child(odd) td:nth-child(4) {
+    background: var(--dark-table-odd) !important;
+  }
+  
+  body.dark-mode tbody tr:nth-child(even) td:nth-child(4) {
+    background: var(--dark-table-even) !important;
+  }
+  
+  body.dark-mode tbody tr:hover td:nth-child(4) {
+    background: var(--dark-table-hover) !important;
+  }
+  
+  body.dark-mode thead th:nth-child(4),
+  body.dark-mode tbody td:nth-child(4) {
+    border-right-color: var(--dark-glass-border);
+  }
+  
+  /* Dark mode button styles */
+  body.dark-mode button.secondary {
+    background: rgba(30, 41, 59, 0.9);
+    color: var(--dark-text);
+    border-color: var(--dark-glass-border);
+  }
+  
+  body.dark-mode button.secondary:hover {
+    background: rgba(30, 41, 59, 1);
+    border-color: var(--dark-primary);
+  }
+  
+  /* Modern dark mode toggle button */
+  #btn-dark-mode {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.1) 100%);
+    border: 1px solid rgba(255,255,255,0.3);
+    backdrop-filter: blur(20px);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  #btn-dark-mode:hover {
+    background: linear-gradient(135deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.2) 100%);
+    border-color: rgba(255,255,255,0.5);
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.2), var(--glow);
+  }
+  
+  #btn-dark-mode:active {
+    transform: translateY(0) scale(0.95);
+  }
+  
+  #dark-mode-icon {
+    font-size: 18px;
+    transition: all 0.3s ease;
+  }
+  
+  #btn-dark-mode:hover #dark-mode-icon {
+    transform: rotate(180deg) scale(1.2);
+  }
+  
+  /* Dark mode scrollbar */
+  body.dark-mode ::-webkit-scrollbar-track {
+    background: rgba(30, 41, 59, 0.1);
+  }
+  
+  body.dark-mode ::-webkit-scrollbar-thumb {
+    background: var(--dark-primary);
+  }
+  
+  body.dark-mode ::-webkit-scrollbar-thumb:hover {
+    background: var(--dark-primary-hover);
+  }
+  
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  
+  body{
+    margin:0;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    color:var(--text);
+    background: var(--bg);
+    background-attachment: fixed;
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
+  }
+  
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+      radial-gradient(circle at 20% 80%, rgba(59, 130, 246, 0.05) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(30, 64, 175, 0.05) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: -1;
+  }
+  
+  .container{
+    max-width:none;
+    width:100%;
+    margin:0 auto;
+    padding:80px 30px 50px;
+    min-height: 0vh;
+    position: relative;
+  }
+  
+  .card{
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+    position: relative;
+    margin-top: 40px;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(20px);
+  }
+  
+  .card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  }
+  
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background: linear-gradient(90deg, var(--primary), var(--primary-hover));
+    border-radius: 20px 20px 0 0;
+  }
+  
+  .header{
+    position: sticky;
+    top:0;
+    z-index:10;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:16px;
+    padding:24px 30px;
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+    border-radius: 0 0 16px 16px;
+    margin: 0 20px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  }
+  
+  .header h1{
+    margin:0;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.025em;
+    position: relative;
+  }
+  
+  .header h1::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 0;
+    width: 50px;
+    height: 3px;
+    background: var(--primary);
+    border-radius: 2px;
+  }
+  
+  .actions{
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+  }
+  
+  button{
+    appearance:none;
+    border: none;
+    background: var(--primary);
+    color: #fff;
+    padding: 14px 28px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: var(--shadow);
+    position: relative;
+    overflow: hidden;
+    letter-spacing: 0.025em;
+    min-height: 48px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  
+  button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.4s ease;
+  }
+  
+  button:hover::before {
+    left: 100%;
+  }
+  
+  button:hover{
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+    background: var(--primary-hover);
+  }
+  
+  button:active{
+    transform: translateY(0);
+  }
+  
+  button.secondary{
+    background: #f8fafc;
+    color: var(--text);
+    border: 2px solid var(--border);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  }
+  
+  button.secondary:hover{
+    background: #f1f5f9;
+    border-color: var(--primary);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transform: translateY(-2px);
+  }
+  
+  button:disabled{
+    opacity:.5;
+    cursor:not-allowed;
+    transform:none;
+    box-shadow: none;
+  }
+  
+  .section{
+    padding: 32px;
+    background: var(--card);
+    margin: 24px;
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    backdrop-filter: blur(10px);
+  }
+  
+  .section:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
+  }
+  
+  .section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary), transparent);
+    border-radius: 16px 16px 0 0;
+    opacity: 0.7;
+  }
+  
+  /* Section separation styling */
+  .section + .section {
+    margin-top: 30px;
+  }
+  
+  /* Main Details section styling */
+  #timesheet-form .section-title {
+    color: var(--primary);
+    font-size: 16px;
+  }
+  
+  /* Additional Details section styling */
+  #timesheet-form-2 .section-title {
+    color: var(--muted);
+    font-size: 14px;
+  }
+  
+  .section-title{
+    margin:0 0 24px;
+    font-size: 16px;
+    color: var(--text);
+    font-weight: 700;
+    letter-spacing: 0.025em;
+    text-transform: none;
+    position: relative;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--border);
+  }
+  
+  .section-title::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 40px;
+    height: 3px;
+    background: var(--primary);
+    border-radius: 2px;
+  }
+  
+  .form-grid{
+    display:grid;
+    grid-template-columns:repeat(6,minmax(0,1fr));
+    gap:24px;
+    margin-bottom: 20px;
+  }
+  
+  @media (max-width:1400px){.form-grid{grid-template-columns:repeat(5,1fr); gap: 22px;}}
+  @media (max-width:1200px){.form-grid{grid-template-columns:repeat(4,1fr); gap: 20px;}}
+  @media (max-width:900px){.form-grid{grid-template-columns:repeat(3,1fr); gap: 18px;}}
+  @media (max-width:700px){.form-grid{grid-template-columns:repeat(2,1fr); gap: 16px;}}
+  @media (max-width:520px){.form-grid{grid-template-columns:1fr; gap: 20px;}}
+  
+  .field{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    position:relative;
+  }
+  
+  label{
+    font-size: 13px;
+    color: var(--text);
+    font-weight: 600;
+    text-transform: none;
+    letter-spacing: 0.025em;
+    margin-bottom: 8px;
+    display: block;
+    line-height: 1.4;
+    position: relative;
+  }
+  
+  /* Required field indicator */
+  label.required::after {
+    content: ' *';
+    color: #ef4444;
+    font-weight: 700;
+  }
+  
+  /* Field group styling */
+  .field {
+    position: relative;
+  }
+  
+  .field::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: -1px;
+    right: -1px;
+    bottom: -1px;
+    background: linear-gradient(135deg, transparent, rgba(59, 130, 246, 0.1));
+    border-radius: 11px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+    z-index: -1;
+  }
+  
+  .field:focus-within::before {
+    opacity: 1;
+  }
+  
+  input,select{
+    padding: 14px 18px;
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    font-size: 14px;
+    background: #ffffff;
+    color: var(--text);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-weight: 500;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.06);
+    letter-spacing: 0.025em;
+    line-height: 1.5;
+    min-height: 48px;
+    box-sizing: border-box;
+  }
+  
+  input:focus,select:focus{
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px var(--ring), 0 4px 12px rgba(59, 130, 246, 0.15);
+    background: #ffffff;
+    transform: translateY(-1px);
+  }
+  
+  input:hover,select:hover{
+    border-color: var(--primary);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.12);
+    transform: translateY(-1px);
+  }
+  
+  input[type="date"]{
+    padding: 14px 18px;
+    min-height: 48px;
+  }
+  
+  /* Enhanced input states */
+  input:disabled, select:disabled {
+    background-color: #f8fafc;
+    border-color: #e2e8f0;
+    color: #94a3b8;
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+  
+  input:read-only {
+    background-color: #f8fafc;
+    border-color: #e2e8f0;
+    color: #64748b;
+  }
+  
+  .link-dropdown{
+    position:absolute;
+    left:0;
+    right:0;
+    top:100%;
+    margin-top:8px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    box-shadow: var(--shadow-lg);
+    z-index:20;
+    max-height:300px;
+    overflow:auto;
+    display:none;
+    backdrop-filter: blur(20px);
+  }
+  
+  .link-item{
+    padding: 14px 16px;
+    cursor:pointer;
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+    transition: all 0.2s ease;
+  }
+  
+  .link-item:hover,.link-item.active{
+    background: rgba(102, 126, 234, 0.1);
+    transform: translateX(4px);
+  }
+  
+  .link-item .value{
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--text);
+  }
+  
+  .link-item .desc{
+    font-size: 12px;
+    color: var(--muted);
+  }
+  
+  .table-card{
+    padding: 0;
+    margin: 20px;
+    background: var(--card);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+  
+  .table-toolbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:16px;
+    padding: 20px 24px;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    background: #f8fafc;
+  }
+  
+  .table-wrapper{
+    width:100%;
+    overflow:auto;
+    border-top: 1px solid #e2e8f0;
+    border-radius: 0 0 8px 8px;
+    position: relative;
+  }
+  
+  table{
+    border-collapse:separate;
+    border-spacing:0;
+    min-width:1800px;
+    width:100%;
+  }
+  
+  thead th{
+    position:sticky;
+    top:0;
+    background: var(--primary);
+    z-index:1;
+    font-size: 12px;
+    text-align:left;
+    color: white;
+    padding: 18px 16px;
+    border-bottom: 3px solid var(--primary-hover);
+    white-space:nowrap;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    line-height: 1.3;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  thead th small {
+    display: block;
+    margin-top: 6px;
+    font-size: 10px;
+    text-transform: none;
+    letter-spacing: 0.02em;
+    opacity: 0.9;
+  }
+  
+  /* Freeze work_description column - both header and all rows */
+  thead th:nth-child(4) {
+    position: sticky;
+    left: 0;
+    z-index: 3;
+    background: #4a5568;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+  }
+  
+  tbody td:nth-child(4) {
+    position: sticky;
+    left: 0;
+    z-index: 2;
+    background: inherit;
+  }
+  
+  /* Ensure proper background for each row in frozen column */
+  tbody tr:nth-child(odd) td:nth-child(4) {
+    background: #f7fafc;
+  }
+  
+  tbody tr:nth-child(even) td:nth-child(4) {
+    background: white;
+  }
+  
+  tbody tr:hover td:nth-child(4) {
+    background: #edf2f7;
+  }
+  
+  /* Ensure frozen column rows maintain their background when scrolling */
+  tbody tr:nth-child(odd) td:nth-child(4) {
+    background: #f7fafc !important;
+  }
+  
+  tbody tr:nth-child(even) td:nth-child(4) {
+    background: white !important;
+  }
+  
+  tbody tr:hover td:nth-child(4) {
+    background: #edf2f7 !important;
+  }
+  
+  /* Ensure work_description textarea in frozen column has proper styling */
+  tbody td:nth-child(4) textarea {
+    background: inherit;
+  }
+  
+  tbody tr:nth-child(odd) td:nth-child(4) textarea {
+    background: #f7fafc;
+  }
+  
+  tbody tr:nth-child(even) td:nth-child(4) textarea {
+    background: white;
+  }
+  
+  tbody tr:hover td:nth-child(4) textarea {
+    background: #edf2f7;
+  }
+  
+  /* Add shadow effect to show frozen column separation */
+  tbody td:nth-child(4)::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: -5px;
+    width: 5px;
+    height: 100%;
+    background: linear-gradient(to right, rgba(0,0,0,0.1), transparent);
+    pointer-events: none;
+  }
+  
+  /* Ensure proper positioning for frozen column */
+  tbody td:nth-child(4) {
+    position: relative;
+  }
+  
+  /* Add border to separate frozen column */
+  thead th:nth-child(4),
+  tbody td:nth-child(4) {
+    border-right: 2px solid #e2e8f0;
+  }
+  
+  /* Enhanced visual separation for frozen column */
+  thead th:nth-child(4) {
+    border-right: 3px solid #2d3748;
+  }
+  
+  /* Ensure all rows in frozen column are properly positioned */
+  tbody tr td:nth-child(4) {
+    position: sticky;
+    left: 0;
+    z-index: 2;
+  }
+  
+  /* Add subtle shadow to show column is frozen */
+  .table-wrapper::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1px;
+    height: 100%;
+    background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.1), transparent);
+    z-index: 4;
+    pointer-events: none;
+  }
+  
+  /* Ensure the table container has proper overflow handling */
+  .table-wrapper {
+    overflow-x: auto;
+    overflow-y: visible;
+  }
+  
+  /* Enhanced animations for formal appearance */
+  .card {
+    animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .section {
+    animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.1s both;
+  }
+  
+  .table-card {
+    animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.2s both;
+  }
+  
+  /* Input focus animations */
+  .field input:focus,
+  .field select:focus {
+    animation: inputFocus 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px) scale(0.98);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+  
+  @keyframes inputFocus {
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.02);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+  
+  /* Smooth transitions for all interactive elements */
+  * {
+    transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+  }
+  
+  /* ChatGPT Chatbox Styling */
+  .chat-widget {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 380px;
+    height: 500px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    box-shadow: var(--shadow-lg);
+    z-index: 1000;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+    backdrop-filter: blur(20px);
+  }
+  
+  .chat-widget.minimized {
+    height: 60px;
+    width: 60px;
+    border-radius: 50%;
+  }
+  
+  .chat-widget.minimized .chat-content,
+  .chat-widget.minimized .chat-input-container {
+    display: none;
+  }
+  
+  .chat-header {
+    background: var(--primary);
+    color: white;
+    padding: 16px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    border-radius: 20px 20px 0 0;
+  }
+  
+  .chat-header.minimized {
+    border-radius: 50%;
+    padding: 20px;
+    justify-content: center;
+  }
+  
+  .chat-title {
+    font-weight: 600;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .chat-title.minimized {
+    display: none;
+  }
+  
+  .chat-controls {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  
+  .chat-settings {
+    background: none;
+    border: none;
+    color: white;
+    padding: 4px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .chat-settings:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+  
+  .chat-toggle {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+  }
+  
+  .chat-toggle:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+  
+  .chat-content {
+    height: 380px;
+    overflow-y: auto;
+    padding: 20px;
+    background: var(--card);
+  }
+  
+  .chat-message {
+    margin-bottom: 16px;
+    display: flex;
+    gap: 12px;
+    animation: messageSlideIn 0.3s ease-out;
+  }
+  
+  .chat-message.user {
+    flex-direction: row-reverse;
+  }
+  
+  .chat-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 12px;
+    flex-shrink: 0;
+  }
+  
+  .chat-avatar.assistant {
+    background: var(--primary);
+    color: white;
+  }
+  
+  .chat-avatar.user {
+    background: var(--muted);
+    color: white;
+  }
+  
+  .chat-bubble {
+    max-width: 280px;
+    padding: 12px 16px;
+    border-radius: 18px;
+    font-size: 13px;
+    line-height: 1.4;
+    word-wrap: break-word;
+  }
+  
+  .chat-bubble.assistant {
+    background: #f1f5f9;
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+  
+  .chat-bubble.user {
+    background: var(--primary);
+    color: white;
+  }
+  
+  .chat-input-container {
+    padding: 20px;
+    border-top: 1px solid var(--border);
+    background: var(--card);
+  }
+  
+  .chat-input-wrapper {
+    display: flex;
+    gap: 8px;
+    align-items: flex-end;
+  }
+  
+  .chat-input {
+    flex: 1;
+    border: 2px solid var(--border);
+    border-radius: 20px;
+    padding: 12px 16px;
+    font-size: 13px;
+    resize: none;
+    min-height: 44px;
+    max-height: 120px;
+    transition: all 0.3s ease;
+    font-family: inherit;
+  }
+  
+  .chat-input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--ring);
+  }
+  
+  .chat-send {
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+  }
+  
+  .chat-send:hover {
+    background: var(--primary-hover);
+    transform: scale(1.05);
+  }
+  
+  .chat-send:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+  
+  .chat-typing {
+    display: none;
+    padding: 12px 16px;
+    background: #f1f5f9;
+    border-radius: 18px;
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 16px;
+  }
+  
+  .chat-typing.show {
+    display: block;
+  }
+  
+  .typing-dots {
+    display: inline-block;
+  }
+  
+  .typing-dots::after {
+    content: '';
+    animation: typing 1.5s infinite;
+  }
+  
+  @keyframes messageSlideIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes typing {
+    0%, 20% { content: ''; }
+    40% { content: '.'; }
+    60% { content: '..'; }
+    80%, 100% { content: '...'; }
+  }
+  
+  /* Dark mode chat styling */
+  body.dark-mode .chat-widget {
+    background: var(--dark-card);
+    border-color: var(--dark-glass-border);
+  }
+  
+  body.dark-mode .chat-content {
+    background: var(--dark-card);
+  }
+  
+  body.dark-mode .chat-bubble.assistant {
+    background: var(--dark-table-odd);
+    color: var(--dark-text);
+    border-color: var(--dark-glass-border);
+  }
+  
+  body.dark-mode .chat-input-container {
+    background: var(--dark-card);
+    border-top-color: var(--dark-glass-border);
+  }
+  
+  body.dark-mode .chat-input {
+    background: var(--dark-input-bg);
+    border-color: var(--dark-glass-border);
+    color: var(--dark-text);
+  }
+  
+  body.dark-mode .chat-typing {
+    background: var(--dark-table-odd);
+    color: var(--dark-muted);
+  }
+  
+  tbody td{
+    border-bottom: 2px solid var(--border);
+    padding: 16px;
+    vertical-align: top;
+    font-size: 13px;
+    color: var(--text);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+  }
+  
+  /* Ensure work_description column has proper vertical alignment */
+  tbody td:nth-child(4) {
+    vertical-align: top;
+    padding-top: 12px;
+    padding-bottom: 12px;
+  }
+  
+  tbody tr:nth-child(odd) td{
+    background: #f8fafc;
+  }
+  
+  tbody tr:nth-child(even) td{
+    background: #ffffff;
+  }
+  
+  tbody tr:hover td{
+    background: #f1f5f9;
+  }
+  
+  tbody tr:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    border-radius: 8px;
+  }
+  
+  tbody td input{
+    width:100%;
+    min-width:120px;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    background: #ffffff;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+    min-height: 40px;
+    box-sizing: border-box;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  
+  tbody td input:focus{
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--ring), 0 2px 8px rgba(59, 130, 246, 0.15);
+    background: #ffffff;
+    transform: translateY(-1px);
+  }
+  
+  tbody td input:hover{
+    border-color: var(--primary);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    transform: translateY(-1px);
+  }
+  
+  tbody td input[type="number"]{
+    min-width:74px;
+    text-align:center;
+    font-weight: 600;
+    background: white;
+    font-variant-numeric: tabular-nums;
+  }
+  
+  tbody td select {
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    background: #ffffff;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    color: var(--text);
+    min-height: 40px;
+    box-sizing: border-box;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  
+  tbody td select:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--ring), 0 2px 8px rgba(59, 130, 246, 0.15);
+    background: #ffffff;
+    transform: translateY(-1px);
+  }
+  
+  tbody td select:hover {
+    border-color: var(--primary);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    transform: translateY(-1px);
+  }
+  
+  /* Work description textarea styling */
+  tbody td textarea {
+    width: 100%;
+    min-width: 200px;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    background: #ffffff;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+    font-family: inherit;
+    line-height: 1.4;
+    resize: vertical;
+    min-height: 40px;
+    max-height: none;
+    overflow-y: auto;
+    box-sizing: border-box;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  
+  tbody td textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--ring), 0 2px 8px rgba(59, 130, 246, 0.15);
+    background: #ffffff;
+    transform: translateY(-1px);
+  }
+  
+  tbody td textarea:hover {
+    border-color: var(--primary);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    transform: translateY(-1px);
+  }
+  
+  /* Auto-populated client__project field styling */
+  tbody td:nth-child(2) input {
+    background-color: #f8fafc;
+    border-color: #cbd5e1;
+    color: #475569;
+    font-style: italic;
+  }
+  
+  tbody td:nth-child(2) input:focus {
+    background-color: #ffffff;
+    border-color: var(--primary);
+    color: var(--text);
+    font-style: normal;
+  }
+  
+  /* Ensure the field wrapper doesn't constrain height */
+  tbody td:nth-child(4) .field {
+    height: auto;
+    min-height: 40px;
+  }
+  
+  /* Ensure table rows can expand to accommodate textarea height */
+  tbody tr {
+    height: auto;
+    min-height: 60px;
+  }
+  
+  /* Dark mode textarea styling */
+  body.dark-mode tbody td textarea {
+    background: var(--dark-input-bg);
+    border-color: var(--dark-glass-border);
+    color: var(--dark-text);
+  }
+  
+  body.dark-mode tbody td textarea:focus {
+    border-color: var(--dark-primary);
+    box-shadow: 0 0 0 3px var(--dark-ring);
+    background: rgba(15, 23, 42, 1);
+  }
+  
+  /* Dark mode auto-populated client__project field styling */
+  body.dark-mode tbody td:nth-child(2) input {
+    background-color: rgba(51, 65, 85, 0.8);
+    border-color: var(--dark-glass-border);
+    color: var(--dark-muted);
+    font-style: italic;
+  }
+  
+  body.dark-mode tbody td:nth-child(2) input:focus {
+    background-color: var(--dark-input-bg);
+    border-color: var(--dark-primary);
+    color: var(--dark-text);
+    font-style: normal;
+  }
+  
+  /* Leave day styling */
+  tbody td input[data-leave-day="true"] {
+    background-color: #fef2f2 !important;
+    border-color: #dc2626 !important;
+    color: #991b1b !important;
+    cursor: not-allowed;
+  }
+  
+  /* Half-day leave styling */
+  tbody td input[data-half-day="true"] {
+    background-color: #fef3c7 !important;
+    border-color: #d97706 !important;
+    color: #92400e !important;
+    cursor: pointer;
+  }
+  
+  /* Leave indicator styling */
+  .leave-indicator {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: #dc2626;
+    color: white;
+    border-radius: 50%;
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    z-index: 10;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    animation: leaveIndicatorPulse 2s infinite;
+  }
+  
+  /* Half-day indicator styling */
+  .half-day-indicator {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: #d97706;
+    color: white;
+    border-radius: 50%;
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    z-index: 10;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    animation: halfDayIndicatorPulse 2s infinite;
+  }
+  
+  @keyframes leaveIndicatorPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+  }
+  
+  @keyframes halfDayIndicatorPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+  }
+  
+  /* Dark mode leave styling */
+  body.dark-mode tbody td input[data-leave-day="true"] {
+    background-color: rgba(220, 38, 38, 0.2) !important;
+    border-color: #ef4444 !important;
+    color: #fecaca !important;
+  }
+  
+  body.dark-mode tbody td input[data-half-day="true"] {
+    background-color: rgba(217, 119, 6, 0.2) !important;
+    border-color: #f59e0b !important;
+    color: #fef3c7 !important;
+  }
+  
+  body.dark-mode .leave-indicator {
+    background: #ef4444;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  }
+  
+  body.dark-mode .half-day-indicator {
+    background: #f59e0b;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  }
+  
+  .footer{
+    padding: 20px 30px;
+    border-top: 1px solid var(--border);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+    background: #f8fafc;
+    border-radius: 0 0 12px 12px;
+  }
+  
+  .note{
+    font-size: 13px;
+    color: var(--muted);
+    font-weight: 600;
+  }
+  
+  #status{
+    font-size: 14px;
+    font-weight: 600;
+    padding: 8px 16px;
+    border-radius: 16px;
+    background: #ffffff;
+    border: 1px solid var(--border);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    transition: all 0.2s ease;
+  }
+  
+  .status-ok{
+    color: var(--success);
+    background: rgba(56, 161, 105, 0.1);
+  }
+  
+  .status-err{
+    color: var(--danger);
+    background: rgba(229, 62, 62, 0.1);
+  }
+  
+  .stack{
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+  }
+  
+  /* Column Visibility Controls */
+  .column-controls {
+    padding: 16px 24px;
+    background: #f8fafc;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  
+  .control-group {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  
+  .checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+    user-select: none;
+    transition: all 0.2s ease;
+  }
+  
+  .checkbox-label:hover {
+    color: var(--primary);
+  }
+  
+  .checkbox-label input[type="checkbox"] {
+    display: none;
+  }
+  
+  .checkmark {
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--border);
+    border-radius: 4px;
+    background: white;
+    position: relative;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .checkbox-label:hover .checkmark {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px var(--ring);
+  }
+  
+  .checkbox-label input[type="checkbox"]:checked + .checkmark {
+    background: var(--primary);
+    border-color: var(--primary);
+  }
+  
+  .checkbox-label input[type="checkbox"]:checked + .checkmark::after {
+    content: '✓';
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+  }
+  
+  /* Dark mode for column controls */
+  body.dark-mode .column-controls {
+    background: var(--dark-table-header);
+    border-color: var(--dark-glass-border);
+  }
+  
+  body.dark-mode .checkbox-label {
+    color: var(--dark-text);
+  }
+  
+  body.dark-mode .checkmark {
+    background: var(--dark-input-bg);
+    border-color: var(--dark-glass-border);
+  }
+  
+  body.dark-mode .checkbox-label:hover .checkmark {
+    border-color: var(--dark-primary);
+    box-shadow: 0 0 0 2px var(--dark-ring);
+  }
+  
+  body.dark-mode .checkbox-label input[type="checkbox"]:checked + .checkmark {
+    background: var(--dark-primary);
+    border-color: var(--dark-primary);
+  }
+  
+  /* Custom Days Selection Styling */
+  .custom-days-selection {
+    margin-top: 16px;
+    padding: 16px;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  }
+  
+  .selection-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  
+  .selection-header span {
+    font-weight: 600;
+    color: var(--text);
+    font-size: 14px;
+  }
+  
+  .days-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(40px, 1fr));
+    gap: 8px;
+    max-height: 200px;
+    overflow-y: auto;
+  }
+  
+  .day-checkbox {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+  
+  .day-checkbox input[type="checkbox"] {
+    display: none;
+  }
+  
+  .day-checkbox .day-label {
+    width: 40px;
+    height: 40px;
+    border: 2px solid var(--border);
+    border-radius: 6px;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text);
+    transition: all 0.2s ease;
+    position: relative;
+  }
+  
+  .day-checkbox:hover .day-label {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px var(--ring);
+    transform: translateY(-1px);
+  }
+  
+  .day-checkbox input[type="checkbox"]:checked + .day-label {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: white;
+  }
+  
+  .day-checkbox input[type="checkbox"]:checked + .day-label::after {
+    content: '✓';
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    background: var(--success);
+    color: white;
+    border-radius: 50%;
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: bold;
+  }
+  
+  .day-checkbox .day-name {
+    font-size: 10px;
+    color: var(--muted);
+    text-align: center;
+    font-weight: 500;
+  }
+  
+  /* Small button styling */
+  button.small {
+    padding: 6px 12px;
+    font-size: 12px;
+    min-height: 32px;
+  }
+  
+  /* Dark mode for custom days selection */
+  body.dark-mode .custom-days-selection {
+    background: var(--dark-card);
+    border-color: var(--dark-glass-border);
+  }
+  
+  body.dark-mode .selection-header {
+    border-bottom-color: var(--dark-glass-border);
+  }
+  
+  body.dark-mode .selection-header span {
+    color: var(--dark-text);
+  }
+  
+  body.dark-mode .day-checkbox .day-label {
+    background: var(--dark-input-bg);
+    border-color: var(--dark-glass-border);
+    color: var(--dark-text);
+  }
+  
+  body.dark-mode .day-checkbox:hover .day-label {
+    border-color: var(--dark-primary);
+    box-shadow: 0 0 0 2px var(--dark-ring);
+  }
+  
+  body.dark-mode .day-checkbox input[type="checkbox"]:checked + .day-label {
+    background: var(--dark-primary);
+    border-color: var(--dark-primary);
+  }
+  
+  body.dark-mode .day-checkbox .day-name {
+    color: var(--dark-muted);
+  }
+  
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 4px;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: var(--primary);
+    border-radius: 4px;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-hover);
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="card">
+    <div class="header">
+      <h1>Timesheet</h1>
+      <div class="actions">
+        <button id="btn-dark-mode" class="secondary" type="button" title="Toggle Dark Mode">
+          <span id="dark-mode-icon">🌙</span>
+        </button>
+        <button id="btn-fetch" class="secondary" type="button">Edit</button>
+        <button id="btn-update" class="secondary" type="button">Update</button>
+        <button id="btn-save" type="button">Save (Create)</button>
+      </div>
+    </div>
+
+    <form id="timesheet-form" class="section" onsubmit="return false;">
+      <p class="section-title">Main Details</p>
+      <div class="form-grid">
+        <div class="field"><label for="name">Timesheet ID (name)</label><input id="name" name="name" placeholder="TS-..." /></div>
+
+        <div class="field">
+          <label for="employee">employee</label>
+          <input id="employee" name="employee" data-link-doctype="Employee" placeholder="Search Employee..." autocomplete="off" />
+          <div class="link-dropdown"></div>
+        </div>
+
+        <div class="field"><label for="employee_name">employee_name</label><input id="employee_name" name="employee_name" /></div>
+        <div class="field">
+          <label for="role">role</label>
+          <input id="role" name="role" placeholder="Auto-filled from employee designation" />
+        </div>
+
+        <div class="field"><label for="work_week">work_week</label>
+          <select id="work_week" name="work_week">
+            <option value=""></option>
+            <option value="Monday-Friday">Monday-Friday</option>
+            <option value="Sunday-Thursday">Sunday-Thursday</option>
+          </select>
+        </div>
+      </div>
+    </form>
+
+    <form id="timesheet-form-2" class="section" onsubmit="return false;">
+      <p class="section-title">Managers Section</p>
+      <div class="form-grid">
+        <div class="field">
+          <label for="department">department</label>
+          <input id="department" name="department" data-link-doctype="Department" placeholder="Search Department..." autocomplete="off" />
+          <div class="link-dropdown"></div>
+        </div>
+
+        <div class="field"><label for="payment_period">payment_period</label><input id="payment_period" name="payment_period" placeholder="e.g. 01/01/2025" /></div>
+
+
+        <div class="field"><label for="date">date</label><input id="date" name="date" type="date" /></div>
+        <div class="field"><label for="base_date">base_date</label><input id="base_date" name="base_date" type="date" /></div>
+        <div class="field"><label for="code">code</label><input id="code" name="code" /></div>
+        <div class="field"><label for="version">version</label><input id="version" name="version" /></div>
+        <div class="field"><label for="approval_date">approval_date</label><input id="approval_date" name="approval_date" type="date" /></div>
+        <div class="field"><label for="approved_by">approved_by</label><input id="approved_by" name="approved_by" placeholder="Name" /></div>
+        <div class="field"><label for="revision_date">revision_date</label><input id="revision_date" name="revision_date" type="date" /></div>
+      </div>
+    </form>
+
+    <div class="table-card">
+      <div class="table-toolbar">
+        <div class="note">Tasks and hours</div>
+        <div class="stack">
+          <button id="btn-add-row" class="secondary" type="button">Add Row</button>
+          <button id="btn-clear-rows" class="secondary" type="button">Clear Rows</button>
+          <button id="btn-test-validation" class="secondary" type="button">Calculate hours</button>
+          <button id="btn-fetch-leaves" class="secondary" type="button">📅 Fetch Leaves</button>
+          <button id="btn-auto-fill-projects" class="secondary" type="button"></button>
+        </div>
+      </div>
+      
+      <!-- Column Visibility Controls -->
+      <div class="column-controls">
+        <div class="control-group">
+          <label class="checkbox-label">
+            <input type="checkbox" id="show-all-days" checked>
+            <span class="checkmark"></span>
+            Show All Days (Day 1-31)
+          </label>
+          <label class="checkbox-label">
+            <input type="checkbox" id="show-current-day">
+            <span class="checkmark"></span>
+            Show Current Day Only
+          </label>
+          <label class="checkbox-label">
+            <input type="checkbox" id="show-custom-days">
+            <span class="checkmark"></span>
+            Show Custom Days
+          </label>
+        </div>
+        
+        <!-- Custom Days Selection (hidden by default) -->
+        <div class="custom-days-selection" id="custom-days-selection" style="display: none;">
+          <div class="selection-header">
+            <span>Select specific days from current month:</span>
+            <button id="select-all-days" class="secondary small">Select All</button>
+            <button id="clear-all-days" class="secondary small">Clear All</button>
+          </div>
+          <div class="days-grid" id="days-grid">
+            <!-- Days will be populated dynamically -->
+          </div>
+        </div>
+      </div>
+      <div class="table-wrapper">
+        <table id="rows-table">
+          <thead>
+            <tr>
+              <th>project_contract_code<br><small style="font-weight: normal; opacity: 0.8;">(Auto-fills unit)</small></th>
+              <th>client__project<br><small style="font-weight: normal; opacity: 0.8;">(Auto-populated)</small></th>
+              <th>role</th>
+              <th>work_description</th>
+              <th>day_1</th><th>day_2</th><th>day_3</th><th>day_4</th><th>day_5</th>
+              <th>day_6</th><th>day_7</th><th>day_8</th><th>day_9</th><th>day_10</th>
+              <th>day_11</th><th>day_12</th><th>day_13</th><th>day_14</th><th>day_15</th>
+              <th>day_16</th><th>day_17</th><th>day_18</th><th>day_19</th><th>day_20</th>
+              <th>day_21</th><th>day_22</th><th>day_23</th><th>day_24</th><th>day_25</th>
+              <th>day_26</th><th>day_27</th><th>day_28</th><th>day_29</th><th>day_30</th><th>day_31</th>
+              <th>actions</th>
+            </tr>
+
+          </thead>
+          <tbody id="rows-body"></tbody>
+        </table>
+      </div>
+      <div class="footer">
+        <div id="status" class="note"></div>
+        <div class="actions">
+          <button id="btn-save-2" type="button">Save (Create)</button>
+          <button id="btn-update-2" class="secondary" type="button">Update</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- ChatGPT Chatbox -->
+  <div class="chat-widget" id="chat-widget">
+    <div class="chat-header" id="chat-header">
+      <div class="chat-title" id="chat-title">
+        <span>🤖</span>
+        <span>AI Assistant</span>
+      </div>
+      <div class="chat-controls">
+        <button class="chat-settings" id="chat-settings" title="Chat Settings" style="background: none; border: none; color: white; padding: 4px; border-radius: 4px; margin-right: 8px; cursor: pointer;">
+          <span>⚙️</span>
+        </button>
+        <button class="chat-toggle" id="chat-toggle" title="Minimize Chat">
+          <span id="chat-toggle-icon">−</span>
+        </button>
+      </div>
+    </div>
+    
+    <div class="chat-content" id="chat-content">
+      <div class="chat-message">
+        <div class="chat-avatar assistant">AI</div>
+        <div class="chat-bubble assistant">
+          Hi! I'm your AI assistant. I can help you with timesheet entries, project descriptions, or any questions about your work. How can I help you today?
+        </div>
+      </div>
+    </div>
+    
+    <div class="chat-typing" id="chat-typing">
+      <span class="typing-dots">AI is typing</span>
+    </div>
+    
+    <div class="chat-input-container" id="chat-input-container">
+      <div class="chat-input-wrapper">
+        <textarea 
+          class="chat-input" 
+          id="chat-input" 
+          placeholder="Type your message here..."
+          rows="1"
+        ></textarea>
+        <button class="chat-send" id="chat-send" title="Send Message">
+          <span>➤</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const API_BASE = 'https://i-aps.app/api/resource/Timesheet';
+  const SEARCH_API = 'https://i-aps.app/api/method/frappe.desk.search.search_link';
+  const API_KEY = 'e08de799de2c8a9';
+  const API_SECRET = 'fe3d15e2e6a70c8';
+
+  const statusEl = document.getElementById('status');
+  function setStatus(msg, ok = true){ statusEl.textContent = msg; statusEl.className = ok ? 'note status-ok' : 'note status-err'; }
+
+  function jsonHeaders(){ return {'Authorization':'token '+API_KEY+':'+API_SECRET,'Content-Type':'application/json','Accept':'application/json'}; }
+  function formHeaders(){ return {'Authorization':'token '+API_KEY+':'+API_SECRET,'Content-Type':'application/x-www-form-urlencoded','Accept':'application/json'}; }
+
+  // always avoid cookies to bypass CSRF
+  const NO_CREDS = { credentials: 'omit' };
+
+  async function apiGet(url){
+    const res = await fetch(url, { headers: jsonHeaders(), ...NO_CREDS });
+    const txt = await res.text();
+    if(!res.ok) throw new Error(txt || 'Fetch failed');
+    return txt ? JSON.parse(txt) : {};
+  }
+  async function apiCreate(url, doc){
+    let res = await fetch(url,{method:'POST',headers:jsonHeaders(),body:JSON.stringify({data:doc}),...NO_CREDS});
+    let txt = await res.text();
+    if(res.ok) return JSON.parse(txt);
+    const body = 'data='+encodeURIComponent(JSON.stringify(doc));
+    res = await fetch(url,{method:'POST',headers:formHeaders(),body,...NO_CREDS});
+    txt = await res.text();
+    if(!res.ok) throw new Error(txt || 'Create failed');
+    return JSON.parse(txt);
+  }
+  async function apiUpdate(url, doc){
+    let res = await fetch(url,{method:'PUT',headers:jsonHeaders(),body:JSON.stringify({data:doc}),...NO_CREDS});
+    let txt = await res.text();
+    if(res.ok) return JSON.parse(txt);
+    const body = 'data='+encodeURIComponent(JSON.stringify(doc));
+    res = await fetch(url,{method:'PUT',headers:formHeaders(),body,...NO_CREDS});
+    txt = await res.text();
+    if(!res.ok) throw new Error(txt || 'Update failed');
+    return JSON.parse(txt);
+  }
+
+  async function searchLink(doctype, txt, pageLength=20){
+    console.log('Searching for:', doctype, 'with text:', txt);
+    
+    try {
+      const params = new URLSearchParams({ txt: txt || '', doctype, page_length: String(pageLength), reference_doctype: 'Timesheet' });
+      const searchUrl = SEARCH_API + '?' + params.toString();
+      console.log('Search URL:', searchUrl);
+      
+      const res = await fetch(searchUrl, { headers: jsonHeaders(), ...NO_CREDS });
+      console.log('Search response status:', res.status);
+      
+      if(!res.ok) {
+        console.error('Search failed with status:', res.status);
+        const errorText = await res.text();
+        console.error('Error response:', errorText);
+        return [];
+      }
+      
+      const data = await res.json();
+      console.log('Search response data:', data);
+      
+      const results = (data && data.message) || [];
+      console.log('Search results:', results);
+      
+      return results;
+    } catch (error) {
+      console.error('Error in searchLink:', error);
+      return [];
+    }
+  }
+  async function fetchDoc(doctype, name, fields){
+    const qs = new URLSearchParams(); if(fields && fields.length) qs.set('fields', JSON.stringify(fields));
+    const url = 'https://i-aps.app/api/resource/' + encodeURIComponent(doctype) + '/' + encodeURIComponent(name) + (qs.toString() ? '?' + qs.toString() : '');
+    const res = await fetch(url, { headers: jsonHeaders(), ...NO_CREDS });
+    const data = await res.json();
+    if(!res.ok) throw new Error(data.message || 'Fetch failed');
+    return data.data || data;
+  }
+
+  function setupLinkInput(input, onSelect){
+    const container = input.parentElement;
+    let dropdown = container.querySelector('.link-dropdown');
+    if(!dropdown){ dropdown = document.createElement('div'); dropdown.className = 'link-dropdown'; container.appendChild(dropdown); }
+    let items = []; let activeIndex = -1; let lastQuery = '';
+    function close(){ dropdown.style.display='none'; activeIndex=-1; items=[]; dropdown.innerHTML=''; }
+    function open(){ dropdown.style.display='block'; }
+    function render(){
+      dropdown.innerHTML = '';
+      items.forEach((it, idx) => {
+        const div = document.createElement('div'); div.className = 'link-item' + (idx===activeIndex ? ' active' : '');
+        const v = document.createElement('div'); v.className='value'; v.textContent = it.value;
+        const d = document.createElement('div'); d.className='desc'; d.textContent = it.description || it.label || '';
+        div.appendChild(v); div.appendChild(d);
+        div.addEventListener('mousedown',(e)=>{ e.preventDefault(); choose(idx); });
+        dropdown.appendChild(div);
+      });
+      if(items.length){ open(); } else { close(); }
+    }
+    function choose(idx){ if(idx<0 || idx>=items.length) return; const it = items[idx]; input.value = it.value; close(); onSelect && onSelect(it); }
+    let typingTimer;
+    input.addEventListener('input', ()=>{
+      const q = input.value.trim(); if(q === lastQuery) return; lastQuery = q; clearTimeout(typingTimer);
+      typingTimer = setTimeout(async ()=>{
+        const doctype = input.dataset.linkDoctype; if(!doctype){ close(); return; }
+        try{ items = await searchLink(doctype, q); activeIndex = items.length ? 0 : -1; render(); }catch(_){ items = []; render(); }
+      }, 200);
+    });
+    input.addEventListener('focus', ()=>{ if(input.value.trim()!=='') input.dispatchEvent(new Event('input')); });
+    input.addEventListener('blur', ()=> setTimeout(close, 120));
+    input.addEventListener('keydown', (e)=>{
+      if(dropdown.style.display!=='block') return;
+      if(e.key==='ArrowDown'){ e.preventDefault(); activeIndex = Math.min(activeIndex+1, items.length-1); render(); }
+      if(e.key==='ArrowUp'){ e.preventDefault(); activeIndex = Math.max(activeIndex-1, 0); render(); }
+      if(e.key==='Enter'){ e.preventDefault(); choose(activeIndex); }
+      if(e.key==='Escape'){ e.preventDefault(); close(); }
+    });
+  }
+
+  const rowsBody = document.getElementById('rows-body');
+  const DAY_FIELDS = Array.from({length:31},(_,i)=>'day_'+(i+1));
+  const PROJECT_CODES = ['APS-000-01','APS-000-06','APS-000-11','APS-000-12','APS-000-13','APS-000-15','APS-000-33','APS-000-34','APS-000-35','APS-000-36'];
+
+  // Project code to unit mapping
+  const PROJECT_UNIT_MAPPING = {
+    'APS-000-01': 'Finance / Admin / HR Unit',
+    'APS-000-06': 'Operations Unit',
+    'APS-000-11': 'Business Development Unit',
+    'APS-000-12': 'Data Analysis Unit',
+    'APS-000-13': 'Communication, Design And Visibility Unit',
+    'APS-000-15': 'Technology (KAP products) Unit',
+    'APS-000-33': 'Program Management Unit',
+    'APS-000-34': 'Technical Unit',
+    'APS-000-35': 'Field Monitoring and Data Collection Unit',
+    'APS-000-36': 'Legal and Compliance Unit'
+  };
+  
+  // Leave application tracking
+  let leaveRecords = [];
+  let currentEmployee = '';
+  
+  // Function to auto-fill client__project based on selected project_contract_code
+  function autoFillClientProject(projectSelect, row) {
+    const selectedProject = projectSelect.value;
+    const clientProjectInput = row.querySelector('input[name="client__project"]');
+    
+    if (clientProjectInput && PROJECT_UNIT_MAPPING[selectedProject]) {
+      clientProjectInput.value = PROJECT_UNIT_MAPPING[selectedProject];
+    }
+  }
+  
+  // Function to fill all existing rows with correct client__project values
+  function fillAllClientProjects() {
+    const rows = rowsBody.querySelectorAll('tr');
+    let filledCount = 0;
+    
+    rows.forEach(row => {
+      const projectSelect = row.querySelector('select[name="project_contract_code"]');
+      const clientProjectInput = row.querySelector('input[name="client__project"]');
+      
+      if (projectSelect && clientProjectInput && projectSelect.value && PROJECT_UNIT_MAPPING[projectSelect.value]) {
+        clientProjectInput.value = PROJECT_UNIT_MAPPING[projectSelect.value];
+        filledCount++;
+      }
+    });
+    
+    if (filledCount > 0) {
+      setStatus(`✅ Auto-filled client__project for ${filledCount} rows`, true);
+      setTimeout(() => setStatus(''), 3000);
+    } else {
+      setStatus('No rows found to auto-fill', false);
+    }
+  }
+  
+  // Function to fetch leave applications for the selected employee
+  async function fetchLeaveApplications() {
+    const employeeInput = document.getElementById('employee');
+    const employee = employeeInput.value.trim();
+    const baseDateInput = document.getElementById('base_date');
+    
+    if (!employee) {
+      setStatus('Please select an employee first', false);
+      return;
+    }
+    
+    if (!baseDateInput.value) {
+      setStatus('Please set a base date first', false);
+      return;
+    }
+    
+    setStatus('Fetching leave applications...', true);
+    
+    try {
+      // Fetch leave applications from the API
+      const baseDate = new Date(baseDateInput.value);
+      const year = baseDate.getFullYear();
+      const month = baseDate.getMonth() + 1;
+      const daysInMonth = new Date(year, month, 0).getDate();
+      
+      // Create proper date strings
+      const startDate = `${year}-${month.toString().padStart(2, '0')}-01`;
+      const endDate = `${year}-${month.toString().padStart(2, '0')}-${daysInMonth}`;
+      
+      console.log('Fetching leaves for:', { employee, startDate, endDate });
+      
+      // Build filters array properly
+      const filters = [
+        ["employee", "=", employee],
+        ["from_date", ">=", startDate],
+        ["to_date", "<=", endDate],
+        ["status", "=", "Approved"]
+      ];
+      
+      // Build fields array
+      const fields = ["name", "employee", "employee_name", "leave_type", "from_date", "to_date", "total_leave_days", "status", "half_day"];
+      
+      // Create query parameters
+      const params = new URLSearchParams({
+        filters: JSON.stringify(filters),
+        fields: JSON.stringify(fields),
+        limit_page_length: '100'
+      });
+      
+      // API endpoint for leave applications
+      const leaveApiUrl = `https://i-aps.app/api/resource/Leave Application?${params.toString()}`;
+      
+      console.log('Leave API URL:', leaveApiUrl);
+      console.log('Filters:', filters);
+      console.log('Fields:', fields);
+      
+      const response = await fetch(leaveApiUrl, { 
+        headers: jsonHeaders(), 
+        ...NO_CREDS 
+      });
+      
+      console.log('Leave API response status:', response.status);
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Leave API error response:', errorText);
+        throw new Error(`HTTP ${response.status}: ${errorText || 'Failed to fetch leave applications'}`);
+      }
+      
+      const data = await response.json();
+      console.log('Leave API response data:', data);
+      
+      leaveRecords = data.data || [];
+      currentEmployee = employee;
+      
+      if (leaveRecords.length > 0) {
+        setStatus(`✅ Found ${leaveRecords.length} approved leave applications`, true);
+        applyLeaveHighlights();
+      } else {
+        setStatus('No approved leave applications found for this month', true);
+        clearLeaveHighlights();
+      }
+      
+      setTimeout(() => setStatus(''), 3000);
+      
+    } catch (error) {
+      console.error('Error fetching leave applications:', error);
+      setStatus('Failed to fetch leave applications: ' + error.message, false);
+      setTimeout(() => setStatus(''), 5000);
+    }
+  }
+  
+  // Function to apply leave highlights to the timesheet
+  function applyLeaveHighlights() {
+    if (!leaveRecords.length || !currentEmployee) return;
+    
+    const baseDateInput = document.getElementById('base_date');
+    if (!baseDateInput.value) return;
+    
+    const baseDate = new Date(baseDateInput.value);
+    const year = baseDate.getFullYear();
+    const month = baseDate.getMonth() + 1;
+    
+    // Clear any existing highlights first
+    clearLeaveHighlights();
+    
+    // Process each leave record
+    leaveRecords.forEach(leave => {
+      const fromDate = new Date(leave.from_date);
+      const toDate = new Date(leave.to_date);
+      
+      // Only process leaves in the current month
+      if (fromDate.getFullYear() === year && fromDate.getMonth() + 1 === month) {
+        const startDay = fromDate.getDate();
+        const endDay = toDate.getDate();
+        
+        // Highlight each day in the leave period
+        for (let day = startDay; day <= endDay; day++) {
+          if (day <= 31) { // Ensure day is within valid range
+            highlightLeaveDay(day, leave.leave_type, leave.half_day);
+          }
+        }
+      }
+    });
+  }
+  
+  // Function to highlight a specific day as leave
+  function highlightLeaveDay(day, leaveType, isHalfDay = false) {
+    const dayInputs = document.querySelectorAll(`input[name="day_${day}"]`);
+    
+    dayInputs.forEach(input => {
+      if (isHalfDay) {
+        // Half-day leave styling
+        input.setAttribute('data-half-day', 'true');
+        input.setAttribute('data-leave-type', leaveType);
+        
+        // Make the input editable but with 4-hour limit
+        input.readOnly = false;
+        input.disabled = false;
+        input.placeholder = `Half-day: ${leaveType} (Max 4 hours)`;
+        input.title = `Half-day Leave: ${leaveType} - You can enter maximum 4 hours`;
+        
+        // Add 4-hour validation
+        input.addEventListener('input', function() {
+          const value = parseFloat(this.value);
+          if (value > 4) {
+            this.value = 4;
+            setStatus('⚠️ Half-day leave: Maximum 4 hours allowed', false);
+            setTimeout(() => setStatus(''), 3000);
+          }
+        });
+        
+        // Add a visual indicator for half-day
+        const halfDayIndicator = document.createElement('div');
+        halfDayIndicator.className = 'half-day-indicator';
+        halfDayIndicator.innerHTML = '⏰';
+        halfDayIndicator.title = `Half-day Leave: ${leaveType} - Max 4 hours`;
+        
+        // Position the indicator relative to the input
+        const inputWrapper = input.closest('td');
+        if (inputWrapper) {
+          inputWrapper.style.position = 'relative';
+          inputWrapper.appendChild(halfDayIndicator);
+        }
+      } else {
+        // Full-day leave styling
+        input.setAttribute('data-leave-day', 'true');
+        input.setAttribute('data-leave-type', leaveType);
+        
+        // Make the input read-only and disabled
+        input.readOnly = true;
+        input.disabled = true;
+        input.placeholder = `Leave: ${leaveType}`;
+        input.title = `Approved Leave: ${leaveType}`;
+        
+        // Add a visual indicator
+        const leaveIndicator = document.createElement('div');
+        leaveIndicator.className = 'leave-indicator';
+        leaveIndicator.innerHTML = '🌴';
+        leaveIndicator.title = `Approved Leave: ${leaveType}`;
+        
+        // Position the indicator relative to the input
+        const inputWrapper = input.closest('td');
+        if (inputWrapper) {
+          inputWrapper.style.position = 'relative';
+          inputWrapper.appendChild(leaveIndicator);
+        }
+      }
+    });
+  }
+  
+  // Function to clear leave highlights
+  function clearLeaveHighlights() {
+    // Remove all leave indicators
+    document.querySelectorAll('.leave-indicator').forEach(indicator => {
+      indicator.remove();
+    });
+    
+    // Remove all half-day indicators
+    document.querySelectorAll('.half-day-indicator').forEach(indicator => {
+      indicator.remove();
+    });
+    
+    // Reset all day inputs to normal state
+    const allDayInputs = document.querySelectorAll('input[name^="day_"]');
+    allDayInputs.forEach(input => {
+      // Remove data attributes
+      input.removeAttribute('data-leave-day');
+      input.removeAttribute('data-half-day');
+      input.removeAttribute('data-leave-type');
+      
+      // Reset input properties
+      input.readOnly = false;
+      input.disabled = false;
+      input.placeholder = 'Hours';
+      input.title = '';
+    });
+    
+    // Re-apply weekend locks
+    applyWeekendLocksToAllRows();
+  }
+  
+
+  
+  // Function to control column visibility
+  function toggleColumnVisibility() {
+    const showAllDays = document.getElementById('show-all-days').checked;
+    const showCurrentDay = document.getElementById('show-current-day').checked;
+    const showCustomDays = document.getElementById('show-custom-days').checked;
+    
+    console.log('Column visibility:', { showAllDays, showCurrentDay, showCustomDays });
+    
+    // Get all day columns (day_1 to day_31) - exclude first 4 columns and last column
+    const dayColumns = document.querySelectorAll('th:not(:nth-child(1)):not(:nth-child(2)):not(:nth-child(3)):not(:nth-child(4)):not(:nth-last-child(1))');
+    
+    if (showCustomDays && !showAllDays && !showCurrentDay) {
+      // Show only custom selected days
+      const selectedDays = getSelectedCustomDays();
+      
+      // Update header columns
+      dayColumns.forEach((th, index) => {
+        const dayNumber = index + 1;
+        if (selectedDays.includes(dayNumber)) {
+          th.style.display = 'table-cell';
+          th.style.background = 'var(--primary)';
+          th.style.color = 'white';
+          th.style.fontWeight = 'bold';
+        } else {
+          th.style.display = 'none';
+        }
+      });
+      
+      // Update all table rows - get each row and update its day cells
+      const tableRows = document.querySelectorAll('#rows-body tr');
+      tableRows.forEach(row => {
+        const dayCells = row.querySelectorAll('td:not(:nth-child(1)):not(:nth-child(2)):not(:nth-child(3)):not(:nth-child(4)):not(:nth-last-child(1))');
+        
+        dayCells.forEach((td, index) => {
+          const dayNumber = index + 1;
+          if (selectedDays.includes(dayNumber)) {
+            td.style.display = 'table-cell';
+          } else {
+            td.style.display = 'none';
+          }
+        });
+      });
+      
+      setStatus(`✅ Showing ${selectedDays.length} custom selected days for all rows`, true);
+      
+    } else if (showCurrentDay && !showAllDays && !showCustomDays) {
+      // Show only current day
+      const currentDate = new Date();
+      const currentDay = currentDate.getDate();
+      
+      // Update header columns
+      dayColumns.forEach((th, index) => {
+        const dayNumber = index + 1;
+        if (dayNumber === currentDay) {
+          th.style.display = 'table-cell';
+          th.style.background = 'var(--primary)';
+          th.style.color = 'white';
+          th.style.fontWeight = 'bold';
+        } else {
+          th.style.display = 'none';
+        }
+      });
+      
+      // Update all table rows
+      const tableRows = document.querySelectorAll('#rows-body tr');
+      tableRows.forEach(row => {
+        const dayCells = row.querySelectorAll('td:not(:nth-child(1)):not(:nth-child(2)):not(:nth-child(3)):not(:nth-child(4)):not(:nth-last-child(1))');
+        
+        dayCells.forEach((td, index) => {
+          const dayNumber = index + 1;
+          if (dayNumber === currentDay) {
+            td.style.display = 'table-cell';
+          } else {
+            td.style.display = 'none';
+          }
+        });
+      });
+      
+      setStatus(`✅ Showing only Day ${currentDay} column for all rows`, true);
+      
+    } else if (showAllDays && !showCurrentDay && !showCustomDays) {
+      // Show all days
+      dayColumns.forEach(th => {
+        th.style.display = 'table-cell';
+        th.style.background = '';
+        th.style.color = '';
+        th.style.fontWeight = '';
+      });
+      
+      // Update all table rows
+      const tableRows = document.querySelectorAll('#rows-body tr');
+      tableRows.forEach(row => {
+        const dayCells = row.querySelectorAll('td:not(:nth-child(1)):not(:nth-child(2)):not(:nth-child(3)):not(:nth-child(4)):not(:nth-last-child(1))');
+        dayCells.forEach(td => {
+          td.style.display = 'table-cell';
+        });
+      });
+      
+      setStatus('✅ Showing all day columns (Day 1-31) for all rows', true);
+      
+    } else if (showAllDays && showCurrentDay && !showCustomDays) {
+      // Show all days but highlight current day
+      const currentDate = new Date();
+      const currentDay = currentDate.getDate();
+      
+      // Update header columns
+      dayColumns.forEach((th, index) => {
+        const dayNumber = index + 1;
+        th.style.display = 'table-cell';
+        
+        if (dayNumber === currentDay) {
+          th.style.background = 'var(--primary)';
+          th.style.color = 'white';
+          th.style.fontWeight = 'bold';
+        } else {
+          th.style.background = '';
+          th.style.color = '';
+          th.style.fontWeight = '';
+        }
+      });
+      
+      // Update all table rows
+      const tableRows = document.querySelectorAll('#rows-body tr');
+      tableRows.forEach(row => {
+        const dayCells = row.querySelectorAll('td:not(:nth-child(1)):not(:nth-child(2)):not(:nth-child(3)):not(:nth-child(4)):not(:nth-last-child(1))');
+        dayCells.forEach(td => {
+          td.style.display = 'table-cell';
+        });
+      });
+      
+      setStatus(`✅ Showing all days with Day ${currentDay} highlighted for all rows`, true);
+      
+    } else if (showCustomDays && showCurrentDay) {
+      // Show custom days with current day highlighted
+      const selectedDays = getSelectedCustomDays();
+      const currentDate = new Date();
+      const currentDay = currentDate.getDate();
+      
+      // Update header columns
+      dayColumns.forEach((th, index) => {
+        const dayNumber = index + 1;
+        if (selectedDays.includes(dayNumber)) {
+          th.style.display = 'table-cell';
+          if (dayNumber === currentDay) {
+            th.style.background = 'var(--success)';
+            th.style.color = 'white';
+            th.style.fontWeight = 'bold';
+          } else {
+            th.style.background = 'var(--primary)';
+            th.style.color = 'white';
+            th.style.fontWeight = 'bold';
+          }
+        } else {
+          th.style.display = 'none';
+        }
+      });
+      
+      // Update all table rows
+      const tableRows = document.querySelectorAll('#rows-body tr');
+      tableRows.forEach(row => {
+        const dayCells = row.querySelectorAll('td:not(:nth-child(1)):not(:nth-child(2)):not(:nth-child(3)):not(:nth-child(4)):not(:nth-last-child(1))');
+        
+        dayCells.forEach((td, index) => {
+          const dayNumber = index + 1;
+          if (selectedDays.includes(dayNumber)) {
+            td.style.display = 'table-cell';
+          } else {
+            td.style.display = 'none';
+          }
+        });
+      });
+      
+      setStatus(`✅ Showing ${selectedDays.length} custom days with current day highlighted for all rows`, true);
+      
+    } else {
+      // No specific mode selected - show all days by default
+      dayColumns.forEach(th => {
+        th.style.display = 'table-cell';
+        th.style.background = '';
+        th.style.color = '';
+        th.style.fontWeight = '';
+      });
+      
+      // Update all table rows
+      const tableRows = document.querySelectorAll('#rows-body tr');
+      tableRows.forEach(row => {
+        const dayCells = row.querySelectorAll('td:not(:nth-child(1)):not(:nth-child(2)):not(:nth-child(3)):not(:nth-child(4)):not(:nth-last-child(1))');
+        dayCells.forEach(td => {
+          td.style.display = 'table-cell';
+        });
+      });
+      
+      setStatus('✅ Showing all day columns (default) for all rows', true);
+    }
+    
+    setTimeout(() => setStatus(''), 3000);
+  }
+  
+  // Function to get selected custom days
+  function getSelectedCustomDays() {
+    const selectedDays = [];
+    const dayCheckboxes = document.querySelectorAll('.day-checkbox input[type="checkbox"]:checked');
+    
+    dayCheckboxes.forEach(checkbox => {
+      const dayNumber = parseInt(checkbox.value);
+      if (!isNaN(dayNumber)) {
+        selectedDays.push(dayNumber);
+      }
+    });
+    
+    return selectedDays.sort((a, b) => a - b);
+  }
+  
+  // Function to populate custom days grid
+  function populateCustomDaysGrid() {
+    const daysGrid = document.getElementById('days-grid');
+    if (!daysGrid) return;
+    
+    daysGrid.innerHTML = '';
+    
+    const baseDateInput = document.getElementById('base_date');
+    const baseDate = baseDateInput ? new Date(baseDateInput.value) : new Date();
+    const year = baseDate.getFullYear();
+    const month = baseDate.getMonth();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    
+    const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    
+    for (let day = 1; day <= daysInMonth; day++) {
+      const date = new Date(year, month, day);
+      const dayOfWeek = dayNames[date.getDay()];
+      const isWeekend = date.getDay() === 5 || date.getDay() === 6; // Friday or Saturday
+      
+      const dayCheckbox = document.createElement('div');
+      dayCheckbox.className = 'day-checkbox';
+      
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.value = day;
+      checkbox.id = `day-${day}-checkbox`;
+      
+      const label = document.createElement('label');
+      label.className = 'day-label';
+      label.htmlFor = `day-${day}-checkbox`;
+      label.textContent = day;
+      
+      if (isWeekend) {
+        label.style.borderColor = 'var(--warning)';
+        label.style.color = 'var(--warning)';
+      }
+      
+      const dayName = document.createElement('div');
+      dayName.className = 'day-name';
+      dayName.textContent = dayOfWeek;
+      
+      dayCheckbox.appendChild(checkbox);
+      dayCheckbox.appendChild(label);
+      dayCheckbox.appendChild(dayName);
+      
+      // Add event listener
+      checkbox.addEventListener('change', () => {
+        toggleColumnVisibility();
+      });
+      
+      daysGrid.appendChild(dayCheckbox);
+    }
+  }
+  
+  // Function to handle select all days
+  function selectAllCustomDays() {
+    const dayCheckboxes = document.querySelectorAll('.day-checkbox input[type="checkbox"]');
+    dayCheckboxes.forEach(checkbox => {
+      checkbox.checked = true;
+    });
+    toggleColumnVisibility();
+  }
+  
+  // Function to handle clear all days
+  function clearAllCustomDays() {
+    const dayCheckboxes = document.querySelectorAll('.day-checkbox input[type="checkbox"]');
+    dayCheckboxes.forEach(checkbox => {
+      checkbox.checked = false;
+    });
+    toggleColumnVisibility();
+  }
+  
+  // Function to initialize column visibility controls
+  function initColumnVisibilityControls() {
+    const showAllDaysCheckbox = document.getElementById('show-all-days');
+    const showCurrentDayCheckbox = document.getElementById('show-current-day');
+    const showCustomDaysCheckbox = document.getElementById('show-custom-days');
+    
+    if (showAllDaysCheckbox && showCurrentDayCheckbox && showCustomDaysCheckbox) {
+      // Set initial state
+      showAllDaysCheckbox.checked = true;
+      showCurrentDayCheckbox.checked = false;
+      showCustomDaysCheckbox.checked = false;
+      
+      // Add event listeners
+      showAllDaysCheckbox.addEventListener('change', toggleColumnVisibility);
+      showCurrentDayCheckbox.addEventListener('change', toggleColumnVisibility);
+      showCustomDaysCheckbox.addEventListener('change', toggleCustomDaysSection);
+      
+      // Initialize visibility
+      toggleColumnVisibility();
+      
+      // Populate custom days grid
+      populateCustomDaysGrid();
+      
+      console.log('Column visibility controls initialized');
+    } else {
+      console.error('Column visibility checkboxes not found');
+    }
+  }
+  
+  // Function to toggle custom days section visibility
+  function toggleCustomDaysSection() {
+    const showCustomDays = document.getElementById('show-custom-days').checked;
+    const customDaysSelection = document.getElementById('custom-days-selection');
+    
+    if (showCustomDays) {
+      customDaysSelection.style.display = 'block';
+      // Ensure other checkboxes are unchecked
+      document.getElementById('show-all-days').checked = false;
+      document.getElementById('show-current-day').checked = false;
+      // Populate the grid if not already done
+      if (customDaysSelection.querySelector('.day-checkbox').length === 0) {
+        populateCustomDaysGrid();
+      }
+    } else {
+      customDaysSelection.style.display = 'none';
+    }
+    
+    toggleColumnVisibility();
+  }
+
+
+
+  // Function to fill role column in all table rows
+  function fillRoleColumn() {
+    const roleInput = document.getElementById('role');
+    const roleValue = roleInput.value.trim();
+    
+    if (!roleValue) {
+      setStatus('Please enter a role value first', false);
+      return;
+    }
+    
+    const rows = rowsBody.querySelectorAll('tr');
+    let filledCount = 0;
+    
+    rows.forEach(row => {
+      const roleCell = row.querySelector('input[name="role"]');
+      if (roleCell) {
+        roleCell.value = roleValue;
+        filledCount++;
+      }
+    });
+    
+    if (filledCount > 0) {
+      setStatus(`✅ Role "${roleValue}" filled in ${filledCount} rows`, true);
+      setTimeout(() => setStatus(''), 3000);
+    } else {
+      setStatus('No rows found to fill', false);
+    }
+  }
+
+  // Function to clear role column in all table rows
+  function clearRoleColumn() {
+    const rows = rowsBody.querySelectorAll('tr');
+    let clearedCount = 0;
+    
+    rows.forEach(row => {
+      const roleCell = row.querySelector('input[name="role"]');
+      if (roleCell) {
+        roleCell.value = '';
+        clearedCount++;
+      }
+    });
+    
+    if (clearedCount > 0) {
+      setStatus(`✅ Role column cleared in ${clearedCount} rows`, true);
+      setTimeout(() => setStatus(''), 3000);
+    } else {
+      setStatus('No rows found to clear', false);
+    }
+  }
+
+  // Ensure base_date field exists and has a value
+  function ensureBaseDate() {
+    let baseDateInput = document.getElementById('base_date');
+    if (!baseDateInput) {
+      return new Date().toISOString().split('T')[0];
+    }
+    
+    if (!baseDateInput.value) {
+      baseDateInput.value = new Date().toISOString().split('T')[0];
+    }
+    
+    return baseDateInput.value;
+  }
+
+  // Apply weekend locks to a specific row
+  function applyWeekendLocksToRow(row) {
+    const baseDateStr = ensureBaseDate();
+    const base = new Date(baseDateStr);
+    const year = base.getFullYear();
+    const monthIndex = base.getMonth();
+    const daysInMonth = new Date(year, monthIndex + 1, 0).getDate();
+    const WEEKEND_DOW = [5, 6]; // Friday=5, Saturday=6
+    
+    for (let i = 1; i <= 31; i++) {
+      const dayInput = row.querySelector(`input[name="day_${i}"]`);
+      if (!dayInput) continue;
+      
+      if (i <= daysInMonth) {
+        const d = new Date(year, monthIndex, i);
+        const dow = d.getDay();
+        const isWeekend = WEEKEND_DOW.includes(dow);
+        
+        // Lock weekend days
+        dayInput.readOnly = isWeekend;
+        dayInput.disabled = isWeekend;
+        
+        // Apply weekend styling
+        if (isWeekend) {
+          dayInput.style.backgroundColor = '#fef2f2';
+          dayInput.style.borderColor = '#dc2626';
+          dayInput.style.color = '#991b1b';
+          dayInput.placeholder = 'Weekend';
+          
+          // Clear weekend values
+          if (dayInput.value !== '') {
+            dayInput.value = '';
+            // Trigger validation
+            dayInput.dispatchEvent(new Event('input'));
+          }
+        } else {
+          dayInput.style.backgroundColor = '';
+          dayInput.style.borderColor = '';
+          dayInput.style.color = '';
+          dayInput.placeholder = 'Hours';
+        }
+      } else {
+        // Day doesn't exist in this month
+        dayInput.readOnly = true;
+        dayInput.disabled = true;
+        dayInput.style.backgroundColor = '#f3f4f6';
+        dayInput.style.borderColor = '#d1d5db';
+        dayInput.style.color = '#9ca3af';
+        dayInput.placeholder = 'N/A';
+        
+        // Clear non-existent day values
+        if (dayInput.value !== '') {
+          dayInput.value = '';
+          dayInput.dispatchEvent(new Event('input'));
+        }
+      }
+    }
+  }
+
+  // Apply weekend locks to all existing rows
+  function applyWeekendLocksToAllRows() {
+    rowsBody.querySelectorAll('tr').forEach(row => {
+      applyWeekendLocksToRow(row);
+    });
+  }
+
+  // Initialize weekend locks when page loads
+  function initializeWeekendLocks() {
+    ensureBaseDate();
+    applyWeekendLocksToAllRows();
+  }
+
+  // Function to sync role from form to all existing rows
+  function syncRoleToExistingRows() {
+    const roleInput = document.getElementById('role');
+    const roleValue = roleInput.value.trim();
+    
+    const rows = rowsBody.querySelectorAll('tr');
+    let syncedCount = 0;
+    
+    rows.forEach(row => {
+      const roleCell = row.querySelector('input[name="role"]');
+      if (roleCell) {
+        roleCell.value = roleValue;
+        syncedCount++;
+      }
+    });
+    
+    if (syncedCount > 0 && roleValue) {
+      setStatus(`✅ Role "${roleValue}" automatically applied to ${syncedCount} rows`, true);
+      setTimeout(() => setStatus(''), 2000);
+    }
+  }
+
+  // Validation functions
+  function validateDayValue(event) {
+    const input = event.target;
+    const dayField = input.name;
+    
+    // Calculate total for this specific day column
+    const total = calculateColumnTotal(dayField);
+    
+    console.log('Validating column:', dayField, 'Total:', total); // Debug log
+    
+    if (total > 8.00) {
+      // Highlight all inputs in this column that have values
+      highlightColumnExceedingLimit(dayField, true);
+      
+      // Show friendly message
+      setStatus(`⚠️ Total hours for ${dayField} cannot exceed 8.00. Current total: ${total.toFixed(2)} hours.`, false);
+      
+      // Reset status after 5 seconds
+      setTimeout(() => {
+        setStatus('&nbsp;');
+      }, 5000);
+    } else {
+      // Remove highlighting from this column
+      highlightColumnExceedingLimit(dayField, false);
+    }
+  }
+
+  function calculateColumnTotal(dayField) {
+    let total = 0;
+    rowsBody.querySelectorAll('tr').forEach(tr => {
+      const input = tr.querySelector(`input[name="${dayField}"]`);
+      if (input && input.value !== '') {
+        total += parseFloat(input.value) || 0;
+      }
+    });
+    return total;
+  }
+
+  function highlightColumnExceedingLimit(dayField, shouldHighlight) {
+    rowsBody.querySelectorAll(`input[name="${dayField}"]`).forEach(input => {
+      if (shouldHighlight) {
+        input.style.borderColor = '#dc2626';
+        input.style.backgroundColor = '#fef2f2';
+      } else {
+        input.style.borderColor = '';
+        input.style.backgroundColor = '';
+      }
+    });
+  }
+
+  function validateAllRows() {
+    let hasErrors = false;
+    let errorMessage = '';
+    
+    console.log('Validating all columns...'); // Debug log
+    
+    // Check each day column total
+    DAY_FIELDS.forEach(day => {
+      const total = calculateColumnTotal(day);
+      if (total > 8.00) {
+        hasErrors = true;
+        errorMessage += `${day}: ${total.toFixed(2)} hours (max: 8.00)\n`;
+        highlightColumnExceedingLimit(day, true);
+      }
+    });
+    
+    if (hasErrors) {
+      setStatus(`In each day column, the total hours cannot exceed 8.00 hours. Please check the highlighted columns.`, false);
+      return false;
+    }
+    
+    return true;
+  }
+
+  function createRow(initial = {}){
+    const tr = document.createElement('tr');
+
+    const tdProject = document.createElement('td');
+    const select = document.createElement('select'); select.name = 'project_contract_code';
+    const optBlank = document.createElement('option'); optBlank.value = ''; optBlank.textContent = ''; select.appendChild(optBlank);
+    PROJECT_CODES.forEach(code=>{ const opt=document.createElement('option'); opt.value=code; opt.textContent=code; if(initial.project_contract_code===code) opt.selected=true; select.appendChild(opt); });
+    
+    // Add event listener to auto-fill client__project when project is selected
+    select.addEventListener('change', function() {
+      autoFillClientProject(this, tr);
+    });
+    
+    tdProject.appendChild(select); tr.appendChild(tdProject);
+
+    // Get role from form if not provided in initial data
+    const formRole = document.getElementById('role')?.value || '';
+    const roleValue = initial.role || formRole;
+    
+    tr.appendChild(makeCellInput('client__project', initial.client__project || '', 'text'));
+    tr.appendChild(makeCellInput('role', roleValue, 'text'));
+    tr.appendChild(makeCellInput('work_description', initial.work_description || '', 'text'));
+    for(const day of DAY_FIELDS){ tr.appendChild(makeCellInput(day, valueAsNumber(initial[day]), 'number')); }
+
+    const actionsTd = document.createElement('td');
+    const btnDuplicate = document.createElement('button'); 
+    btnDuplicate.type='button'; 
+    btnDuplicate.textContent='Duplicate'; 
+    btnDuplicate.className='secondary'; 
+    btnDuplicate.style.marginRight = '5px';
+    btnDuplicate.onclick=()=>duplicateRow(tr);
+    
+    const btnRemove = document.createElement('button'); 
+    btnRemove.type='button'; 
+    btnRemove.textContent='Remove'; 
+    btnRemove.className='secondary'; 
+    btnRemove.onclick=()=>tr.remove();
+    
+    actionsTd.appendChild(btnDuplicate);
+    actionsTd.appendChild(btnRemove); 
+    tr.appendChild(actionsTd);
+
+    rowsBody.appendChild(tr);
+    
+    // Add validation to all day input fields
+    tr.querySelectorAll('input[type="number"]').forEach(input => {
+      input.addEventListener('input', validateDayValue);
+      input.addEventListener('blur', validateDayValue);
+    });
+    
+    // Apply weekend locks to the new row
+    applyWeekendLocksToRow(tr);
+    
+    // Auto-fill client__project if initial project_contract_code is provided
+    if (initial.project_contract_code && PROJECT_UNIT_MAPPING[initial.project_contract_code]) {
+      const clientProjectInput = tr.querySelector('input[name="client__project"]');
+      if (clientProjectInput) {
+        clientProjectInput.value = PROJECT_UNIT_MAPPING[initial.project_contract_code];
+      }
+    }
+    
+    // Apply current column visibility to the new row
+    setTimeout(() => {
+      toggleColumnVisibility();
+    }, 100);
+  }
+
+  function duplicateRow(sourceRow){
+    const rowData = {};
+    
+    // Get data from source row
+    rowData.project_contract_code = sourceRow.querySelector('select[name="project_contract_code"]')?.value || '';
+    rowData.client__project = sourceRow.querySelector('input[name="client__project"]')?.value || '';
+    rowData.role = sourceRow.querySelector('input[name="role"]')?.value || '';
+    rowData.work_description = sourceRow.querySelector('textarea[name="work_description"]')?.value || '';
+    
+    for(const day of DAY_FIELDS){ 
+      const v = sourceRow.querySelector('input[name="'+day+'"]')?.value; 
+      // Only copy non-weekend and non-N/A values
+      if (v !== '' && v !== '0') {
+        const dayNum = day.replace('day_', '');
+        const baseDateStr = ensureBaseDate();
+        const base = new Date(baseDateStr);
+        const year = base.getFullYear();
+        const monthIndex = base.getMonth();
+        const daysInMonth = new Date(year, monthIndex + 1, 0).getDate();
+        const WEEKEND_DOW = [5, 6];
+        
+        if (dayNum <= daysInMonth) {
+          const d = new Date(year, monthIndex, parseInt(dayNum));
+          const dow = d.getDay();
+          const isWeekend = WEEKEND_DOW.includes(dow);
+          
+          if (!isWeekend) {
+            rowData[day] = Number(v);
+          }
+        }
+      }
+    }
+    
+    // Create new row with duplicated data
+    createRow(rowData);
+  }
+
+  function valueAsNumber(val){ if(val===null||val===undefined||val==='') return ''; const num=Number(val); return isNaN(num)?'':num; }
+  function makeCellInput(name, value, type='text'){
+    const td=document.createElement('td'); const wrap=document.createElement('div'); wrap.className='field';
+    
+    if(name === 'work_description') {
+      // Create textarea for work_description to allow multi-line text
+      const textarea = document.createElement('textarea'); 
+      textarea.name = name; 
+      textarea.autocomplete = 'off';
+      textarea.rows = 1;
+      textarea.placeholder = 'Enter work description...';
+      textarea.style.resize = 'vertical';
+      textarea.style.minHeight = '40px';
+      textarea.style.maxHeight = 'none';
+      textarea.style.overflowY = 'auto';
+      
+      if(value !== undefined) textarea.value = value;
+      
+      // Auto-resize textarea based on content
+      textarea.addEventListener('input', function() {
+        this.style.height = 'auto';
+        this.style.height = this.scrollHeight + 'px';
+        
+        // Ensure the table row adjusts to the new height
+        const row = this.closest('tr');
+        if (row) {
+          row.style.height = 'auto';
+        }
+      });
+      
+      // Initial resize
+      setTimeout(() => {
+        textarea.style.height = 'auto';
+        textarea.style.height = textarea.scrollHeight + 'px';
+        
+        // Ensure the table row adjusts to the new height
+        const row = textarea.closest('tr');
+        if (row) {
+          row.style.height = 'auto';
+        }
+      }, 0);
+      
+      wrap.appendChild(textarea); 
+      td.appendChild(wrap); 
+      return td;
+    } else {
+    const input=document.createElement('input'); input.type=type; input.name=name; input.autocomplete='off';
+    if(type==='number'){ 
+      input.step='0.25'; 
+      input.min='0'; 
+      input.placeholder='Hours';
+    }
+    if(value!==undefined) input.value=value;
+    wrap.appendChild(input); td.appendChild(wrap); return td;
+    }
+  }
+  function clearRows(){ rowsBody.innerHTML=''; }
+  function getRowsData(){
+    const rows=[]; rowsBody.querySelectorAll('tr').forEach(tr=>{
+      const row={project_contract_code: tr.querySelector('select[name="project_contract_code"]')?.value || '',
+        client__project: tr.querySelector('input[name="client__project"]')?.value || '',
+        role: tr.querySelector('input[name="role"]')?.value || '',
+        work_description: tr.querySelector('textarea[name="work_description"]')?.value || ''};
+      for(const day of DAY_FIELDS){ const v=tr.querySelector('input[name="'+day+'"]')?.value; row[day]=v===''?0:Number(v); }
+      rows.push(row);
+    }); return rows;
+  }
+  function setRowsData(items){
+    clearRows(); 
+    if(Array.isArray(items)&&items.length){ 
+      for(const item of items){ createRow(item); } 
+    } else { 
+      createRow(); 
+    }
+    
+    // Add validation to all existing day input fields
+    rowsBody.querySelectorAll('input[type="number"]').forEach(input => {
+      input.addEventListener('input', validateDayValue);
+      input.addEventListener('blur', validateDayValue);
+    });
+    
+    // Apply weekend locks to all rows after they're created
+    rowsBody.querySelectorAll('tr').forEach(row => {
+      applyWeekendLocksToRow(row);
+    });
+    
+    // Apply current column visibility to all rows
+    setTimeout(() => {
+      toggleColumnVisibility();
+    }, 200);
+  }
+
+  function serializeForm(){
+    const get=id=>document.getElementById(id)?.value || '';
+    return {
+      doctype:'Timesheet',
+      name:get('name') || undefined,
+      employee:get('employee'),
+      employee_name:get('employee_name'),
+      role:get('role'),
+      department:get('department'),
+      payment_period:get('payment_period'),
+      work_week:get('work_week'),
+      roles:get('roles'),
+      corresponding_unit:get('corresponding_unit'),
+      name_signature:get('name_signature'),
+      position:get('position'),
+      date:get('date') || null,
+      base_date:get('base_date') || null,
+      code:get('code'),
+      version:get('version'),
+      approval_date:get('approval_date') || null,
+      approved_by:get('approved_by'),
+      revision_date:get('revision_date') || null,
+      table_lkhc:getRowsData()
+    };
+  }
+  function populateForm(data){
+    const set=(id,val)=>{const el=document.getElementById(id); if(el) el.value=val ?? '';};
+    set('name',data.name); set('employee',data.employee); set('employee_name',data.employee_name); set('role',data.role);
+    set('department',data.department); set('payment_period',data.payment_period); set('work_week',data.work_week);
+    set('roles',data.roles); set('corresponding_unit',data.corresponding_unit); set('name_signature',data.name_signature);
+    set('position',data.position); set('date',(data.date||'').substring(0,10)); set('base_date',(data.base_date||'').substring(0,10)); set('code',data.code); set('version',data.version);
+    set('approval_date',(data.approval_date||'').substring(0,10)); set('approved_by',data.approved_by); set('revision_date',(data.revision_date||'').substring(0,10));
+    setRowsData(data.table_lkhc || []);
+    
+    // Re-apply weekend locks after populating form
+    setTimeout(() => {
+      applyWeekendLocksToAllRows();
+    }, 100);
+  }
+
+  async function handleCreate(){
+    try{
+      // Validate all rows before saving
+      if (!validateAllRows()) {
+        return;
+      }
+      
+      setStatus('Saving...'); disableAll(true);
+      const doc = serializeForm(); delete doc.name;
+      const res = await apiCreate(API_BASE, doc);
+      const out = res.data || res; populateForm(out);
+      setStatus('Created: ' + (out.name || '(unknown)'));
+    }catch(e){ setStatus('Create failed: ' + (e.message || e), false); }
+    finally{ disableAll(false); }
+  }
+  async function handleFetch(){
+    const name = document.getElementById('name').value.trim();
+    if(!name){ setStatus('Enter Timesheet ID in "name" to fetch.', false); return; }
+    try{
+      setStatus('Fetching...'); disableAll(true);
+      const res = await apiGet(API_BASE + '/' + encodeURIComponent(name));
+      const out = res.data || res; populateForm(out);
+      setStatus('Fetched ' + name);
+    }catch(e){ setStatus('Fetch failed: ' + (e.message || e), false); }
+    finally{ disableAll(false); }
+  }
+  async function handleUpdate(){
+    const name = document.getElementById('name').value.trim();
+    if(!name){ setStatus('Enter Timesheet ID in "name" to update.', false); return; }
+    try{
+      // Validate all rows before updating
+      if (!validateAllRows()) {
+        return;
+      }
+      
+      setStatus('Updating...'); disableAll(true);
+      const doc = serializeForm();
+      const res = await apiUpdate(API_BASE + '/' + encodeURIComponent(name), doc);
+      const out = res.data || res; populateForm(out);
+      setStatus('Updated ' + name);
+    }catch(e){ setStatus('Update failed: ' + (e.message || e), false); }
+    finally{ disableAll(false); }
+  }
+  function disableAll(disabled){
+    document.querySelectorAll('button,input,select').forEach(el=>{ if(el.id==='name' && disabled) return; el.disabled = disabled; });
+  }
+
+  function initLinkInputs(){
+    console.log('Initializing link inputs...');
+    
+    const employeeInput = document.getElementById('employee');
+    const departmentInput = document.getElementById('department');
+    
+    if (employeeInput) {
+      console.log('Setting up employee input with doctype:', employeeInput.dataset.linkDoctype);
+      setupLinkInput(employeeInput, async (item)=>{
+        console.log('Employee selected:', item);
+        try{
+          const doc = await fetchDoc('Employee', item.value, ['employee_name','department','designation']);
+          console.log('Employee data fetched:', doc);
+          
+          const en=document.getElementById('employee_name'); if(en) en.value=doc.employee_name || '';
+          const dep=document.getElementById('department'); if(dep) dep.value=doc.department || '';
+          const role=document.getElementById('role'); if(role) role.value=doc.designation || '';
+          
+          // Auto-fetch leave applications when employee is selected
+          setTimeout(() => {
+            fetchLeaveApplications();
+          }, 500);
+        }catch(error){
+          console.error('Error fetching employee data:', error);
+          setStatus('Failed to fetch employee details: ' + error.message, false);
+        }
+      });
+    } else {
+      console.error('Employee input not found!');
+    }
+    
+    if (departmentInput) {
+      console.log('Setting up department input with doctype:', departmentInput.dataset.linkDoctype);
+      setupLinkInput(departmentInput);
+    } else {
+      console.error('Department input not found!');
+    }
+  }
+
+  // Dark mode functionality
+  function initDarkMode() {
+    const darkModeBtn = document.getElementById('btn-dark-mode');
+    const darkModeIcon = document.getElementById('dark-mode-icon');
+    
+    // Check for saved dark mode preference
+    const savedDarkMode = localStorage.getItem('timesheet-dark-mode');
+    if (savedDarkMode === 'true') {
+      document.body.classList.add('dark-mode');
+      darkModeIcon.textContent = '☀️';
+    }
+    
+    darkModeBtn.addEventListener('click', () => {
+      document.body.classList.toggle('dark-mode');
+      const isDarkMode = document.body.classList.contains('dark-mode');
+      
+      // Update icon
+      darkModeIcon.textContent = isDarkMode ? '☀️' : '🌙';
+      
+      // Save preference
+      localStorage.setItem('timesheet-dark-mode', isDarkMode);
+      
+      // Update status
+      setStatus(isDarkMode ? '🌙 Dark mode enabled' : '☀️ Light mode enabled', true);
+      setTimeout(() => setStatus('&nbsp;'), 2000);
+    });
+  }
+
+  document.getElementById('btn-add-row').addEventListener('click',()=>createRow());
+  document.getElementById('btn-clear-rows').addEventListener('click',()=>setRowsData([]));
+  document.getElementById('btn-save').addEventListener('click',handleCreate);
+  document.getElementById('btn-save-2').addEventListener('click',handleCreate);
+  document.getElementById('btn-update').addEventListener('click',handleUpdate);
+  document.getElementById('btn-update-2').addEventListener('click',handleUpdate);
+  document.getElementById('btn-fetch').addEventListener('click',handleFetch);
+  document.getElementById('btn-test-validation').addEventListener('click', () => {
+    console.log('Testing validation...');
+    const result = validateAllRows();
+    console.log('Validation result:', result);
+    if (result) {
+      setStatus('✅ All hours are calculated', true);
+    }
+  });
+  
+    document.getElementById('btn-auto-fill-projects').addEventListener('click', fillAllClientProjects);
+  document.getElementById('btn-fetch-leaves').addEventListener('click', fetchLeaveApplications);
+  
+  // Add event listeners for custom days controls
+  document.addEventListener('DOMContentLoaded', () => {
+    const selectAllBtn = document.getElementById('select-all-days');
+    const clearAllBtn = document.getElementById('clear-all-days');
+    
+    if (selectAllBtn) {
+      selectAllBtn.addEventListener('click', selectAllCustomDays);
+    }
+    
+    if (clearAllBtn) {
+      clearAllBtn.addEventListener('click', clearAllCustomDays);
+    }
+  });
+  
+  // Initialize with a slight delay to ensure DOM is ready
+  setTimeout(() => {
+    console.log('Initializing timesheet system...');
+    initLinkInputs();
+    createRow();
+    initializeWeekendLocks(); // Initialize weekend locks on page load
+    initDarkMode(); // Initialize dark mode functionality
+    initColumnVisibilityControls(); // Initialize column visibility controls
+    console.log('Timesheet system initialized');
+  }, 100);
+  
+  // Also initialize custom days grid when DOM is fully loaded
+  document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => {
+      populateCustomDaysGrid();
+    }, 300);
+  });
+  
+  // Initialize base_date field
+  const baseDateInput = document.getElementById('base_date');
+  if (baseDateInput) {
+    baseDateInput.value = new Date().toISOString().split('T')[0];
+    baseDateInput.addEventListener('change', () => {
+      applyWeekendLocksToAllRows();
+      // Re-fetch leaves if employee is selected
+      if (currentEmployee) {
+        setTimeout(() => {
+          fetchLeaveApplications();
+        }, 300);
+      }
+      // Update column visibility to reflect new date
+      setTimeout(() => {
+        toggleColumnVisibility();
+      }, 100);
+      // Refresh custom days grid for new month
+      setTimeout(() => {
+        populateCustomDaysGrid();
+      }, 200);
+    });
+  }
+  
+  // Add event listener to role input for auto-sync
+  document.getElementById('role').addEventListener('input', () => {
+    // Auto-sync role to existing rows immediatelycorresponding_unit
+    syncRoleToExistingRows();
+  });
+  
+  // Also sync when role input loses focus
+  document.getElementById('role').addEventListener('blur', () => {
+    syncRoleToExistingRows();
+  });
+  
+  // ChatGPT Chatbox Functionality
+  class ChatBox {
+    constructor() {
+      this.isMinimized = false;
+      this.isTyping = false;
+      this.chatHistory = [];
+      this.apiKey = '';
+      this.apiEndpoint = 'https://api.openai.com/v1/chat/completions';
+      this.model = 'gpt-3.5-turbo';
+      this.maxTokens = 500;
+      this.temperature = 0.7;
+      this.defaultApiKey = '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';
+      this.init();
+    }
+    
+    init() {
+      this.loadApiKey();
+      this.bindEvents();
+      this.autoResizeInput();
+      this.loadChatHistory();
+      this.checkApiStatus();
+    }
+    
+    loadApiKey() {
+      // Try to load API key from localStorage
+      this.apiKey = localStorage.getItem('openai-api-key') || '';
+      
+      // Load saved settings
+      this.loadSettings();
+      
+      // Check if using default key
+      const usingDefault = localStorage.getItem('using-default-key') === 'true';
+      
+      // If no API key and not using default, show configuration prompt
+      if (!this.apiKey && !usingDefault) {
+        this.showApiConfigPrompt();
+      } else if (usingDefault && this.apiKey === this.defaultApiKey) {
+        // If using default key, ensure it's set
+        this.apiKey = this.defaultApiKey;
+        localStorage.setItem('openai-api-key', this.defaultApiKey);
+      }
+    }
+    
+    loadSettings() {
+      try {
+        const savedSettings = localStorage.getItem('chat-settings');
+        if (savedSettings) {
+          const settings = JSON.parse(savedSettings);
+          this.model = settings.model || 'gpt-3.5-turbo';
+          this.maxTokens = settings.maxTokens || 500;
+          this.temperature = settings.temperature || 0.7;
+        }
+      } catch (error) {
+        console.log('Could not load chat settings');
+      }
+    }
+    
+    showApiConfigPrompt() {
+      const chatContent = document.getElementById('chat-content');
+      
+      // Clear existing content
+      chatContent.innerHTML = '';
+      
+      const configMessage = document.createElement('div');
+      configMessage.className = 'chat-message';
+      configMessage.innerHTML = `
+        <div class="chat-avatar assistant">AI</div>
+        <div class="chat-bubble assistant">
+          <div style="margin-bottom: 16px;">
+            <strong>🔑 API Configuration</strong><br>
+            Choose how you'd like to configure the AI chat feature.
+          </div>
+          <div style="margin-bottom: 16px;">
+            <button id="use-default-key" style="background: var(--success); color: white; border: none; padding: 12px 20px; border-radius: 6px; cursor: pointer; margin-right: 12px; font-weight: 600;">
+              🚀 Use Default API Key
+            </button>
+            <button id="use-custom-key" style="background: var(--primary); color: white; border: none; padding: 12px 20px; border-radius: 6px; cursor: pointer; font-weight: 600;">
+              🔑 Enter Custom API Key
+            </button>
+          </div>
+          <div style="margin-bottom: 12px; display: none;" id="custom-key-section">
+            <input type="password" id="api-key-input" placeholder="Enter your OpenAI API key" 
+                   style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; margin-bottom: 8px;">
+            <button id="save-api-key" style="background: var(--primary); color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">
+              Save Custom API Key
+            </button>
+          </div>
+          <div style="font-size: 12px; color: #666;">
+            <strong>Default API Key:</strong> Pre-configured for immediate use<br>
+            <strong>Custom API Key:</strong> Use your own OpenAI account<br>
+            <a href="https://platform.openai.com/api-keys" target="_blank" style="color: var(--primary);">Get your own API key here</a>
+          </div>
+        </div>
+      `;
+      
+      chatContent.appendChild(configMessage);
+      
+      // Bind events
+      document.getElementById('use-default-key').addEventListener('click', () => {
+        this.useDefaultApiKey();
+      });
+      
+      document.getElementById('use-custom-key').addEventListener('click', () => {
+        document.getElementById('custom-key-section').style.display = 'block';
+        document.getElementById('api-key-input').focus();
+      });
+      
+      document.getElementById('save-api-key').addEventListener('click', () => {
+        this.saveApiKey();
+      });
+      
+      // Allow Enter key to save
+      document.getElementById('api-key-input').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          this.saveApiKey();
+        }
+      });
+    }
+    
+    useDefaultApiKey() {
+      this.apiKey = this.defaultApiKey;
+      localStorage.setItem('openai-api-key', this.defaultApiKey);
+      localStorage.setItem('using-default-key', 'true');
+      
+      // Test the API key
+      this.testApiKey(this.defaultApiKey);
+    }
+    
+    saveApiKey() {
+      const apiKeyInput = document.getElementById('api-key-input');
+      const apiKey = apiKeyInput.value.trim();
+      
+      if (!apiKey) {
+        alert('Please enter a valid API key');
+        return;
+      }
+      
+      this.apiKey = apiKey;
+      localStorage.setItem('openai-api-key', apiKey);
+      localStorage.setItem('using-default-key', 'false');
+      
+      // Test the API key
+      this.testApiKey(apiKey);
+    }
+    
+    async testApiKey(apiKey) {
+      try {
+        const response = await this.callOpenAI('Hello', apiKey);
+        if (response) {
+          this.showSuccessMessage();
+          this.loadChatHistory();
+        }
+      } catch (error) {
+        this.showErrorMessage(error.message);
+      }
+    }
+    
+    showSuccessMessage() {
+      const chatContent = document.getElementById('chat-content');
+      chatContent.innerHTML = `
+        <div class="chat-message">
+          <div class="chat-avatar assistant">AI</div>
+          <div class="chat-bubble assistant">
+            ✅ <strong>API Key Configured Successfully!</strong><br><br>
+            Hi! I'm your AI assistant powered by OpenAI. I can help you with timesheet entries, project descriptions, time calculations, or any questions about your work.<br><br>
+            How can I help you today?
+          </div>
+        </div>
+      `;
+    }
+    
+    showErrorMessage(errorMsg) {
+      const chatContent = document.getElementById('chat-content');
+      chatContent.innerHTML = `
+        <div class="chat-message">
+          <div class="chat-avatar assistant">AI</div>
+          <div class="chat-bubble assistant">
+            ❌ <strong>API Key Test Failed</strong><br><br>
+            Error: ${errorMsg}<br><br>
+            Please check your API key and try again. You can also use the fallback mode for basic help.
+            <br><br>
+            <button id="use-fallback" style="background: var(--primary); color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">
+              Use Fallback Mode
+            </button>
+          </div>
+        </div>
+      `;
+      
+      document.getElementById('use-fallback').addEventListener('click', () => {
+        this.useFallbackMode();
+      });
+    }
+    
+    useFallbackMode() {
+      this.apiKey = '';
+      localStorage.removeItem('openai-api-key');
+      this.showSuccessMessage();
+    }
+    
+    showSettings() {
+      const chatContent = document.getElementById('chat-content');
+      const currentContent = chatContent.innerHTML;
+      
+      const settingsMessage = document.createElement('div');
+      settingsMessage.className = 'chat-message';
+      settingsMessage.innerHTML = `
+        <div class="chat-avatar assistant">AI</div>
+        <div class="chat-bubble assistant">
+          <div style="margin-bottom: 16px;">
+            <strong>⚙️ Chat Settings</strong>
+          </div>
+          <div style="margin-bottom: 12px;">
+            <label style="display: block; margin-bottom: 4px; font-weight: 600;">OpenAI API Key:</label>
+            <div style="margin-bottom: 8px; padding: 8px; background: #f8fafc; border-radius: 4px; border: 1px solid #e2e8f0;">
+              ${this.isUsingDefaultKey() ? 
+                '<span style="color: var(--success); font-weight: 600;">✅ Using Default API Key</span><br><small style="color: #666;">Pre-configured for immediate use</small>' : 
+                '<span style="color: var(--primary); font-weight: 600;">🔑 Using Custom API Key</span><br><small style="color: #666;">Your personal OpenAI account</small>'
+              }
+            </div>
+            <input type="password" id="settings-api-key" value="${this.apiKey && !this.isUsingDefaultKey() ? '••••••••••••••••' : ''}" 
+                   placeholder="${this.apiKey ? 'API key configured' : 'Enter your OpenAI API key'}"
+                   style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; margin-bottom: 8px; ${this.isUsingDefaultKey() ? 'background: #f1f5f9; color: #64748b;' : ''}"
+                   ${this.isUsingDefaultKey() ? 'disabled' : ''}>
+            <div style="display: flex; gap: 8px;">
+              ${!this.isUsingDefaultKey() ? 
+                `<button id="update-api-key" style="background: var(--primary); color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">
+                  ${this.apiKey ? 'Update Key' : 'Save Key'}
+                </button>` : 
+                '<button id="switch-to-custom" style="background: var(--primary); color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">Switch to Custom Key</button>'
+              }
+              ${this.apiKey && !this.isUsingDefaultKey() ? '<button id="remove-api-key" style="background: #dc2626; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">Remove Key</button>' : ''}
+              ${this.isUsingDefaultKey() ? '<button id="remove-default-key" style="background: #dc2626; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">Remove Default Key</button>' : ''}
+            </div>
+          </div>
+          <div style="margin-bottom: 12px;">
+            <label style="display: block; margin-bottom: 4px; font-weight: 600;">AI Model:</label>
+            <select id="settings-model" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+              <option value="gpt-3.5-turbo" ${this.model === 'gpt-3.5-turbo' ? 'selected' : ''}>GPT-3.5 Turbo (Fast, Cost-effective)</option>
+              <option value="gpt-4" ${this.model === 'gpt-4' ? 'selected' : ''}>GPT-4 (More Capable, Higher Cost)</option>
+              <option value="gpt-4-turbo" ${this.model === 'gpt-4-turbo' ? 'selected' : ''}>GPT-4 Turbo (Balanced)</option>
+            </select>
+          </div>
+          <div style="margin-bottom: 12px;">
+            <label style="display: block; margin-bottom: 4px; font-weight: 600;">Response Length:</label>
+            <select id="settings-max-tokens" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+              <option value="300" ${this.maxTokens === 300 ? 'selected' : ''}>Short (300 tokens)</option>
+              <option value="500" ${this.maxTokens === 500 ? 'selected' : ''}>Medium (500 tokens)</option>
+              <option value="800" ${this.maxTokens === 800 ? 'selected' : ''}>Long (800 tokens)</option>
+            </select>
+          </div>
+          <div style="margin-bottom: 16px;">
+            <button id="back-to-chat" style="background: var(--muted); color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">
+              ← Back to Chat
+            </button>
+          </div>
+        </div>
+      `;
+      
+      chatContent.innerHTML = '';
+      chatContent.appendChild(settingsMessage);
+      
+      // Bind settings events
+      if (document.getElementById('update-api-key')) {
+        document.getElementById('update-api-key').addEventListener('click', () => {
+          this.updateSettings();
+        });
+      }
+      
+      if (document.getElementById('switch-to-custom')) {
+        document.getElementById('switch-to-custom').addEventListener('click', () => {
+          this.switchToCustomKey();
+        });
+      }
+      
+      if (document.getElementById('remove-api-key')) {
+        document.getElementById('remove-api-key').addEventListener('click', () => {
+          this.removeApiKey();
+        });
+      }
+      
+      if (document.getElementById('remove-default-key')) {
+        document.getElementById('remove-default-key').addEventListener('click', () => {
+          this.removeDefaultKey();
+        });
+      }
+      
+      document.getElementById('back-to-chat').addEventListener('click', () => {
+        chatContent.innerHTML = currentContent;
+      });
+      
+      // Allow Enter key to update
+      document.getElementById('settings-api-key').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          this.updateSettings();
+        }
+      });
+    }
+    
+    updateSettings() {
+      const apiKeyInput = document.getElementById('settings-api-key');
+      const modelSelect = document.getElementById('settings-model');
+      const maxTokensSelect = document.getElementById('settings-max-tokens');
+      
+      let newApiKey = apiKeyInput.value.trim();
+      
+      // If the input shows dots, don't change the API key
+      if (newApiKey === '••••••••••••••••') {
+        newApiKey = this.apiKey;
+      }
+      
+      const newModel = modelSelect.value;
+      const newMaxTokens = parseInt(maxTokensSelect.value);
+      
+      // Update settings
+      this.model = newModel;
+      this.maxTokens = newMaxTokens;
+      
+      if (newApiKey && newApiKey !== this.apiKey) {
+        this.apiKey = newApiKey;
+        localStorage.setItem('openai-api-key', newApiKey);
+      }
+      
+      // Save settings
+      localStorage.setItem('chat-settings', JSON.stringify({
+        model: this.model,
+        maxTokens: this.maxTokens
+      }));
+      
+      // Show success message
+      this.addMessage('✅ Settings updated successfully!', 'assistant');
+    }
+    
+    removeApiKey() {
+      this.apiKey = '';
+      localStorage.removeItem('openai-api-key');
+      localStorage.setItem('using-default-key', 'false');
+      this.addMessage('🗑️ Custom API key removed. Chat will now use fallback responses.', 'assistant');
+    }
+    
+    removeDefaultKey() {
+      this.apiKey = '';
+      localStorage.removeItem('openai-api-key');
+      localStorage.setItem('using-default-key', 'false');
+      this.addMessage('🗑️ Default API key removed. Chat will now use fallback responses.', 'assistant');
+    }
+    
+    switchToCustomKey() {
+      localStorage.setItem('using-default-key', 'false');
+      this.addMessage('🔑 Switched to custom API key mode. Please enter your API key in settings.', 'assistant');
+      this.showSettings();
+    }
+    
+    isUsingDefaultKey() {
+      return localStorage.getItem('using-default-key') === 'true';
+    }
+    
+    async checkApiStatus() {
+      if (this.apiKey) {
+        try {
+          await this.callOpenAI('test', this.apiKey);
+        } catch (error) {
+          console.log('API key validation failed:', error.message);
+          // Don't show error to user, just log it
+        }
+      }
+    }
+    
+    bindEvents() {
+      // Toggle minimize/maximize
+      document.getElementById('chat-toggle').addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.toggleMinimize();
+      });
+      
+      // Header click to maximize if minimized
+      document.getElementById('chat-header').addEventListener('click', () => {
+        if (this.isMinimized) {
+          this.toggleMinimize();
+        }
+      });
+      
+      // Send message on Enter (Shift+Enter for new line)
+      document.getElementById('chat-input').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          this.sendMessage();
+        }
+      });
+      
+      // Send button click
+      document.getElementById('chat-send').addEventListener('click', () => {
+        this.sendMessage();
+      });
+      
+      // Settings button click
+      document.getElementById('chat-settings').addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.showSettings();
+      });
+      
+      // Auto-resize textarea
+      document.getElementById('chat-input').addEventListener('input', () => {
+        this.autoResizeInput();
+      });
+    }
+    
+    toggleMinimize() {
+      const widget = document.getElementById('chat-widget');
+      const header = document.getElementById('chat-header');
+      const title = document.getElementById('chat-title');
+      const toggleIcon = document.getElementById('chat-toggle-icon');
+      
+      this.isMinimized = !this.isMinimized;
+      
+      if (this.isMinimized) {
+        widget.classList.add('minimized');
+        header.classList.add('minimized');
+        title.classList.add('minimized');
+        toggleIcon.textContent = '+';
+        toggleIcon.title = 'Maximize Chat';
+      } else {
+        widget.classList.remove('minimized');
+        header.classList.remove('minimized');
+        title.classList.remove('minimized');
+        toggleIcon.textContent = '−';
+        toggleIcon.title = 'Minimize Chat';
+        document.getElementById('chat-input').focus();
+      }
+    }
+    
+    autoResizeInput() {
+      const input = document.getElementById('chat-input');
+      input.style.height = 'auto';
+      input.style.height = Math.min(input.scrollHeight, 120) + 'px';
+    }
+    
+    async sendMessage() {
+      const input = document.getElementById('chat-input');
+      const message = input.value.trim();
+      
+      if (!message) return;
+      
+      // Add user message to chat
+      this.addMessage(message, 'user');
+      input.value = '';
+      this.autoResizeInput();
+      
+      // Show typing indicator
+      this.showTyping(true);
+      
+      try {
+        let response;
+        
+        if (this.apiKey) {
+          // Use OpenAI API
+          response = await this.callOpenAI(message, this.apiKey);
+        } else {
+          // Use fallback responses
+          response = await this.generateFallbackResponse(message);
+        }
+        
+        // Hide typing indicator
+        this.showTyping(false);
+        
+        // Add AI response to chat
+        this.addMessage(response, 'assistant');
+        
+      } catch (error) {
+        this.showTyping(false);
+        console.error('Chat error:', error);
+        
+        let errorMessage = 'Sorry, I encountered an error. Please try again.';
+        if (error.message.includes('API key')) {
+          errorMessage = 'API key error. Please check your configuration.';
+        } else if (error.message.includes('rate limit')) {
+          errorMessage = 'Rate limit exceeded. Please wait a moment before trying again.';
+        } else if (error.message.includes('quota')) {
+          errorMessage = 'API quota exceeded. Please check your OpenAI account.';
+        }
+        
+        this.addMessage(errorMessage, 'assistant');
+      }
+    }
+    
+    async callOpenAI(message, apiKey) {
+      const messages = [
+        {
+          role: 'system',
+          content: `You are a helpful AI assistant for a timesheet management system. You help users with:
+          - Timesheet entries and best practices
+          - Project codes and their meanings
+          - Time calculations and validation
+          - Work description writing
+          - General work-related questions
+          
+          Be concise, helpful, and professional. If asked about specific timesheet features, provide practical advice.`
+        },
+        ...this.chatHistory.slice(-10).map(msg => ({
+          role: msg.sender === 'user' ? 'user' : 'assistant',
+          content: msg.content
+        })),
+        {
+          role: 'user',
+          content: message
+        }
+      ];
+      
+      const response = await fetch(this.apiEndpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`
+        },
+        body: JSON.stringify({
+          model: this.model,
+          messages: messages,
+          max_tokens: this.maxTokens,
+          temperature: this.temperature,
+          stream: false
+        })
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        let errorMessage = 'API request failed';
+        
+        if (response.status === 401) {
+          errorMessage = 'Invalid API key. Please check your configuration.';
+        } else if (response.status === 429) {
+          errorMessage = 'Rate limit exceeded. Please wait before trying again.';
+        } else if (response.status === 402) {
+          errorMessage = 'Payment required. Please check your OpenAI account.';
+        } else if (response.status === 500) {
+          errorMessage = 'OpenAI service error. Please try again later.';
+        } else if (errorData.error && errorData.error.message) {
+          errorMessage = errorData.error.message;
+        }
+        
+        throw new Error(errorMessage);
+      }
+      
+      const data = await response.json();
+      return data.choices[0].message.content.trim();
+    }
+    
+    addMessage(content, sender) {
+      const chatContent = document.getElementById('chat-content');
+      const messageDiv = document.createElement('div');
+      messageDiv.className = `chat-message ${sender}`;
+      
+      const avatar = document.createElement('div');
+      avatar.className = `chat-avatar ${sender}`;
+      avatar.textContent = sender === 'assistant' ? 'AI' : 'U';
+      
+      const bubble = document.createElement('div');
+      bubble.className = `chat-bubble ${sender}`;
+      
+      // Convert markdown-like formatting to HTML
+      const formattedContent = this.formatMessage(content);
+      bubble.innerHTML = formattedContent;
+      
+      messageDiv.appendChild(avatar);
+      messageDiv.appendChild(bubble);
+      chatContent.appendChild(messageDiv);
+      
+      // Scroll to bottom
+      chatContent.scrollTop = chatContent.scrollHeight;
+      
+      // Save to chat history
+      this.chatHistory.push({ content, sender, timestamp: new Date() });
+      this.saveChatHistory();
+    }
+    
+    formatMessage(content) {
+      // Convert basic markdown to HTML
+      return content
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // Bold
+        .replace(/\*(.*?)\*/g, '<em>$1</em>') // Italic
+        .replace(/`(.*?)`/g, '<code style="background: rgba(0,0,0,0.1); padding: 2px 4px; border-radius: 3px; font-family: monospace;">$1</code>') // Inline code
+        .replace(/\n/g, '<br>') // Line breaks
+        .replace(/•/g, '•') // Bullet points
+        .replace(/✅/g, '<span style="color: #059669;">✅</span>') // Success
+        .replace(/❌/g, '<span style="color: #dc2626;">❌</span>') // Error
+        .replace(/🔑/g, '<span style="color: #d97706;">🔑</span>') // Key
+        .replace(/🤖/g, '<span style="color: #7c3aed;">🤖</span>'); // Robot
+    }
+    
+    showTyping(show) {
+      const typing = document.getElementById('chat-typing');
+      if (show) {
+        typing.classList.add('show');
+        typing.scrollIntoView({ behavior: 'smooth' });
+      } else {
+        typing.classList.remove('show');
+      }
+    }
+    
+    async generateFallbackResponse(message) {
+      // Simulate API delay for consistency
+      await new Promise(resolve => setTimeout(resolve, 800 + Math.random() * 1200));
+      
+      // Enhanced fallback responses based on keywords
+      const lowerMessage = message.toLowerCase();
+      
+      if (lowerMessage.includes('help') || lowerMessage.includes('assist')) {
+        return "I'm here to help! I can assist with timesheet entries, project descriptions, time calculations, or any questions about your work. What specific help do you need?";
+      }
+      
+      if (lowerMessage.includes('timesheet') || lowerMessage.includes('time')) {
+        return "For timesheet entries, make sure to:\n• Select the correct project code\n• Enter detailed work descriptions\n• Log hours for each day\n• Keep daily totals under 8 hours\n• Use the weekend lock feature for non-working days";
+      }
+      
+      if (lowerMessage.includes('project') || lowerMessage.includes('code')) {
+        return "The project codes correspond to different units:\n• APS-000-01: Finance/Admin/HR\n• APS-000-06: Operations\n• APS-000-11: Business Development\n• APS-000-12: Data Analysis\n• APS-000-13: Communication & Design\n• APS-000-15: Technology\n• APS-000-33: Program Management\n• APS-000-34: Technical\n• APS-000-35: Field Monitoring\n• APS-000-36: Legal & Compliance";
+      }
+      
+      if (lowerMessage.includes('hours') || lowerMessage.includes('calculate')) {
+        return "To calculate hours:\n• Enter your time in decimal format (e.g., 7.5 for 7 hours 30 minutes)\n• Use the 'Calculate hours' button to validate totals\n• Each day column should not exceed 8 hours total\n• Weekend days are automatically locked";
+      }
+      
+      if (lowerMessage.includes('weekend') || lowerMessage.includes('lock')) {
+        return "Weekend locking automatically:\n• Prevents entries on Friday and Saturday\n• Locks days that don't exist in the selected month\n• Can be adjusted by changing the base date\n• Helps maintain accurate time tracking";
+      }
+      
+      if (lowerMessage.includes('role') || lowerMessage.includes('position')) {
+        return "Role management features:\n• Enter your role in the main form\n• It automatically syncs to all table rows\n• Can be filled in bulk using the form field\n• Helps maintain consistency across entries";
+      }
+      
+      if (lowerMessage.includes('api') || lowerMessage.includes('key')) {
+        return "To use the full AI features:\n• Get an API key from OpenAI Platform\n• Enter it in the chat configuration\n• This enables advanced AI responses\n• Without it, I use basic fallback responses";
+      }
+      
+      // Default response
+      return "I understand you're asking about: '" + message + "'. I can help with timesheet management, project codes, time calculations, and general work-related questions. Could you be more specific about what you need help with?";
+    }
+    
+    saveChatHistory() {
+      localStorage.setItem('timesheet-chat-history', JSON.stringify(this.chatHistory.slice(-50))); // Keep last 50 messages
+    }
+    
+    loadChatHistory() {
+      try {
+        const saved = localStorage.getItem('timesheet-chat-history');
+        if (saved) {
+          this.chatHistory = JSON.parse(saved);
+          // Optionally restore chat history here
+        }
+      } catch (error) {
+        console.log('Could not load chat history');
+      }
+    }
+  }
+  
+  // Initialize chatbox
+  const chatBox = new ChatBox();
+  
+
+</script>
+</body>
+</html>
